@@ -5,6 +5,21 @@ const pageTitle = "Resultados esperados";
 ---
 <Page title={pageTitle}>
 	<h1 style="margin:0 0 1rem 0;">Resultados esperados</h1>
-	<p>Se espera reducir el consumo hídrico entre 40–60% respecto al riego tradicional y aumentar 15–25% la productividad a través de aplicación precisa y oportuna. Adicionalmente, menor escorrentía de fertilizantes y ahorro económico anual por menor agua/energía y mano de obra.</p>
+	<p>Se espera reducir el consumo hídrico entre 40–60% respecto al riego tradicional y aumentar 15–25% la productividad a través de aplicación precisa y oportuna.</p>
 	<ResultsCharts />
+	<hr/>
+	<h3>Actividad de refuerzo</h3>
+	<p>Introduce área (ha) y consumo actual (m³/ha/mes) para estimar ahorro (50%):</p>
+	<input id="ha" type="number" value="1" min="0" step="0.1" style="padding:0.4rem;border:1px solid #9e9e9e;border-radius:8px;" />
+	<input id="m3" type="number" value="300" min="0" step="10" style="padding:0.4rem;border:1px solid #9e9e9e;border-radius:8px;margin-left:0.5rem;" />
+	<button id="rzGo" style="margin-left:0.5rem;padding:0.4rem 0.8rem;border:1px solid #9e9e9e;border-radius:8px;background:#fff;cursor:pointer;">Calcular</button>
+	<div id="rzOut" style="margin-top:0.5rem;"> </div>
+	<script>
+		document.getElementById('rzGo').onclick = ()=>{
+			const ha = Number(document.getElementById('ha').value||0);
+			const m3 = Number(document.getElementById('m3').value||0);
+			const ahorro = Math.round(ha*m3*0.5);
+			document.getElementById('rzOut').textContent = `Ahorro estimado: ${ahorro.toLocaleString()} m³/mes (50%).`;
+		};
+	</script>
 </Page>

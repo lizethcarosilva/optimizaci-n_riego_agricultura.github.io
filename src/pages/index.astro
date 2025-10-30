@@ -1,64 +1,25 @@
 ---
-import Hero from "../components/Hero.astro";
-import ProblemWater from "../components/ProblemWater.astro";
-import SystemSimulator from "../components/SystemSimulator.astro";
-import AIQuiz from "../components/AIQuiz.astro";
-import ResultsCharts from "../components/ResultsCharts.astro";
-import ImpactCalculator from "../components/ImpactCalculator.astro";
-import Team from "../components/Team.astro";
-import Theory from "../components/Theory.astro";
-import SensorSim from "../components/SensorSim.astro";
+import Page from "../layouts/Page.astro";
 ---
-
-<html lang="es">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Smart Irrigation Tolima</title>
-		<style>
-			:root{color-scheme:light dark}
-			body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,sans-serif;background:#fafafa;color:#1b1b1b}
-			header,footer{padding:0.75rem 1rem}
-			nav a{color:inherit;text-decoration:none;margin-right:1rem}
-			.container{max-width:1100px;margin:0 auto}
-		</style>
-	</head>
-	<body>
-		<header>
-			<div class="container" style="display:flex;align-items:center;justify-content:space-between;">
-				<strong>OPTIMIZACIÓN DE RIEGO</strong>
-				<nav>
-					<a href="#teoria">Teoría</a>
-					<a href="#problema">Problema</a>
-					<a href="#simulador">Simulador</a>
-					<a href="#sensor">Sensor</a>
-					<a href="#quiz">Juego</a>
-					<a href="#resultados">Resultados</a>
-					<a href="#calculadora">Calculadora</a>
-					<a href="#equipo">Equipo</a>
-				</nav>
-			</div>
-		</header>
-
-		<main>
-			<Hero />
-			<Theory />
-			<ProblemWater />
-			<SystemSimulator />
-			<SensorSim />
-			<AIQuiz />
-			<ResultsCharts />
-			<ImpactCalculator />
-			<Team />
-		</main>
-
-		<footer>
-			<div class="container" style="display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;">
-				<span>© 2025 Universidad del Tolima · Proyecto estudiantil</span>
-				<a href="https://github.com/lizethcarosilva/optimizaci-n_riego_agricultura.github.io" target="_blank" rel="noopener">Código en GitHub</a>
-			</div>
-		</footer>
-	</body>
-</html>
+<Page title="Optimización de riego agrícola con IA e IoT">
+	<h1 style="margin:0 0 0.5rem 0;">OPTIMIZACIÓN DE RIEGO EN AGRICULTURA</h1>
+	<p style="margin:0 0 1rem 0;">Sistema inteligente que combina sensores y algoritmos para reducir consumo de agua manteniendo la productividad. Universidad del Tolima · Ingeniería de Sistemas.</p>
+	<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:0.75rem;margin-bottom:1rem;">
+		<div style="border:1px solid #e0e0e0;border-radius:12px;padding:1rem;background:#fff;">
+			<strong>Estudiantes</strong>
+			<ul style="margin:0.4rem 0 0 1rem;">
+				<li>Lizeth Andrea Caro Silva</li>
+				<li>Carlos Stiven Villada Quiceno</li>
+				<li>Juan Camilo Giraldo Perdomo</li>
+			</ul>
+		</div>
+		<div style="border:1px solid #e0e0e0;border-radius:12px;padding:1rem;background:#fff;">
+			<strong>Docente</strong>
+			<div>Adriana Paola Albarracín Calderón</div>
+		</div>
+	</div>
+	<div style="display:flex;flex-wrap:wrap;gap:0.5rem;">
+		<a href="/justificacion" style="padding:0.6rem 0.9rem;border-radius:10px;border:1px solid #2e7d32;background:#2e7d32;color:#fff;text-decoration:none;">Ir a Justificación</a>
+		<a href="/actividades" style="padding:0.6rem 0.9rem;border-radius:10px;border:1px solid #9e9e9e;text-decoration:none;color:#111;background:#fff;">Ver Actividades</a>
+	</div>
+</Page>

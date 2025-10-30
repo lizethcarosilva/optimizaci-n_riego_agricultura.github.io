@@ -5,10 +5,20 @@ const pageTitle = "Referencias";
 <Page title={pageTitle}>
 	<h1 style="margin:0 0 1rem 0;">Referencias bibliográficas</h1>
 	<ul>
-		<li>FAO. (2022). El estado mundial de la agricultura y la alimentación.</li>
+		<li id="fao">FAO. (2022). El estado mundial de la agricultura y la alimentación.</li>
 		<li>Bonilla, V. V., & López, D. F. (2015). Evaluación de huella hídrica en cultivo de papa R12.</li>
 		<li>Martín Arroyo, M. (2017). El riego inteligente en la agricultura. iAgua.</li>
 		<li>Colorado State University Extension. (2023). Irrigation Scheduling: Principles and Practices.</li>
 		<li>Li, S., Zhang, Y., & Wang, L. (2022). Smart Irrigation and Precision Agriculture.</li>
 	</ul>
+	<hr/>
+	<h3>Actividad de refuerzo</h3>
+	<button id="copyFao" style="padding:0.4rem 0.8rem;border:1px solid #9e9e9e;border-radius:8px;background:#fff;cursor:pointer;">Copiar cita FAO (APA)</button>
+	<div id="copyOut" style="margin-top:0.5rem;"> </div>
+	<script>
+		document.getElementById('copyFao').onclick = async ()=>{
+			const txt = 'FAO. (2022). El estado mundial de la agricultura y la alimentación. https://www.fao.org/publications';
+			try{ await navigator.clipboard.writeText(txt); document.getElementById('copyOut').textContent = '📋 Copiado al portapapeles.'; }catch(e){ document.getElementById('copyOut').textContent = txt; }
+		};
+	</script>
 </Page>
