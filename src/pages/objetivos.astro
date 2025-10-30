@@ -15,7 +15,7 @@ const pageTitle = "Objetivos";
 	</ul>
 	<hr/>
 	<h3>Actividad de refuerzo</h3>
-	<p>Marca los objetivos específicos válidos:</p>
+	<p>Marca los objetivos específicos válidos y luego presiona “Comprobar”.</p>
 	<div>
 		<label><input type="checkbox" class="chk" data-correct="1"/> Diseñar un prototipo con sensores y control</label><br/>
 		<label><input type="checkbox" class="chk" data-correct="1"/> Implementar un modelo predictivo</label><br/>
@@ -27,8 +27,13 @@ const pageTitle = "Objetivos";
 	<script>
 		document.getElementById('chkBtn').onclick = ()=>{
 			const boxes = Array.from(document.querySelectorAll('.chk'));
+			const correct = boxes.filter(b=> b.dataset.correct==='1');
 			const ok = boxes.every(b => (b.dataset.correct === '1') === b.checked);
-			document.getElementById('chkOut').textContent = ok ? '✅ Correcto.' : 'ℹ️ Revisa: los objetivos deben ser medibles y relacionados con el propósito.';
+			boxes.forEach(b=>{
+				b.parentElement.style.background = (b.dataset.correct==='1') ? '#e8f5e9' : '#ffebee';
+			});
+			const lista = correct.map(b=> b.parentElement.textContent.trim()).join(' · ');
+			document.getElementById('chkOut').textContent = ok ? '✅ Correcto.' : `Respuestas correctas: ${lista}`;
 		};
 	</script>
 </Page>

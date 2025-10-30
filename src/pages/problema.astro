@@ -6,14 +6,4 @@ const pageTitle = "Problema";
 	<h1 style="margin:0 0 1rem 0;">Problema ambiental</h1>
 	<p>El riego tradicional, manual o por temporizador, rara vez considera la humedad real del suelo ni la probabilidad de lluvia. Esto genera <strong>sobre riego</strong> (lixiviación de nutrientes, eutrofización) o <strong>déficit hídrico</strong> (estrés del cultivo, menor rendimiento). En papa (Cundinamarca) se midió un exceso cercano a 5.000 m³/ha (Bonilla & López, 2015).</p>
 	<p>Intervenir es necesario para: 1) reducir consumo de agua sin afectar productividad; 2) evitar contaminación por escorrentía; 3) disminuir costos de riego y energía; 4) aumentar resiliencia climática.</p>
-	<hr/>
-	<h3>Actividad de refuerzo</h3>
-	<p>Arrastra para estimar el <em>exceso</em> de agua aplicado (%):</p>
-	<input id="waste" type="range" min="0" max="100" value="50" style="width:100%" />
-	<div id="wasteOut">Tu estimación: 50% — Valor de referencia en estudio: ~<strong>60%</strong>.</div>
-	<script>
-		const waste = document.getElementById('waste');
-		const out = document.getElementById('wasteOut');
-		waste.addEventListener('input', ()=>{ out.innerHTML = `Tu estimación: ${waste.value}% — Valor de referencia en estudio: ~<strong>60%</strong>.`;});
-	</script>
 </Page>
