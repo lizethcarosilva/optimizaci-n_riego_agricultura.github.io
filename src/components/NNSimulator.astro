@@ -1,8 +1,9 @@
 <section style="padding:2rem;max-width:1000px;margin:0 auto;">
 	<h2 style="margin:0 0 0.5rem 0;">Simulador de red neuronal (demo)</h2>
-	<p style="margin:0 0 1rem 0;">Este demo usa una red sencilla (1 capa oculta) para predecir si se debe regar a partir de humedad (%), temperatura (°C) y probabilidad de lluvia (%). Entrena con datos sintéticos y muestra la pérdida.</p>
+	<p style="margin:0 0 1rem 0;">Entrena una red 3→6→1 con datos sintéticos. Puedes cambiar la <strong>importancia</strong> de cada indicador al crear los datos de entrenamiento.</p>
 	<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;align-items:start;">
 		<div class="card" style="background:#fff;border:1px solid #e0e0e0;border-radius:12px;padding:1rem;">
+			<h4 style="margin:0 0 0.5rem 0;">Entrada actual</h4>
 			<label>Humedad (%)
 				<input id="x_h" type="range" min="0" max="100" value="35" style="width:100%"/>
 			</label>
@@ -17,8 +18,20 @@
 			<div><small id="x_r_v">20%</small></div>
 		</div>
 		<div class="card" style="background:#fff;border:1px solid #e0e0e0;border-radius:12px;padding:1rem;">
+			<h4 style="margin:0 0 0.5rem 0;">Importancia de indicadores (entrenamiento)</h4>
+			<label>Importancia humedad (↓ humedad → regar)
+				<input id="w_h" type="range" min="0" max="100" value="60" style="width:100%"/>
+			</label>
+			<label>Importancia temperatura (↑ temperatura → regar)
+				<input id="w_t" type="range" min="0" max="100" value="50" style="width:100%"/>
+			</label>
+			<label>Importancia lluvia (↓ lluvia → regar)
+				<input id="w_r" type="range" min="0" max="100" value="40" style="width:100%"/>
+			</label>
+		</div>
+		<div class="card" style="background:#fff;border:1px solid #e0e0e0;border-radius:12px;padding:1rem;">
 			<div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
-				<button id="train" class="btn" style="padding:0.5rem 0.8rem;border-radius:10px;border:1px solid #2e7d32;background:#2e7d32;color:#fff;cursor:pointer;">Entrenar 200 épocas</button>
+				<button id="train" class="btn" style="padding:0.5rem 0.8rem;border-radius:10px;border:1px solid #2e7d32;background:#2e7d32;color:#fff;cursor:pointer;">Entrenar 300 épocas</button>
 				<button id="predict" class="btn btn--ghost" style="padding:0.5rem 0.8rem;border-radius:10px;border:1px solid #9e9e9e;background:#fff;cursor:pointer;">Predecir</button>
 			</div>
 			<div style="margin-top:0.75rem;">
@@ -31,17 +44,24 @@
 			</div>
 		</div>
 	</div>
+	<div class="card" style="margin-top:1rem;background:#f8fbf9;border:1px solid #e0e0e0;border-radius:12px;padding:1rem;">
+		<strong>Cómo leer el simulador:</strong>
+		<ul>
+			<li>La red aprende una regla sintética con la importancia que selecciones.</li>
+			<li>Salida cercana a 1 → regar; cercana a 0 → no regar.</li>
+			<li>Sirve para explicar el <em>comportamiento esperado</em> de un modelo sobre indicadores clave.</li>
+		</ul>
+	</div>
 </section>
 <script>
-	// Pequeña NN: 3->6->1, activación ReLU en oculta, sigmoide en salida
 	function randn(){ return (Math.random()*2-1)*0.1; }
 	function relu(x){ return Math.max(0,x); }
 	function sigmoid(x){ return 1/(1+Math.exp(-x)); }
 	function dsigmoid(y){ return y*(1-y); }
 
-	let W1 = Array.from({length:6}, ()=> [randn(),randn(),randn()]); // 6x3
+	let W1 = Array.from({length:6}, ()=> [randn(),randn(),randn()]);
 	let b1 = Array.from({length:6}, ()=> randn());
-	let W2 = Array.from({length:6}, ()=> randn()); // 6
+	let W2 = Array.from({length:6}, ()=> randn());
 	let b2 = randn();
 	const lr = 0.01;
 
@@ -57,17 +77,14 @@
 		let mse = 0;
 		for(const {x,t} of data){
 			const {h,y} = forward(x);
-			const e = y - t; // error
+			const e = y - t;
 			mse += e*e;
-			// retroprop
 			const dz2 = e * dsigmoid(y);
-			for(let i=0;i<6;i++){
-				W2[i] -= lr * dz2 * h[i];
-			}
+			for(let i=0;i<6;i++) W2[i] -= lr * dz2 * h[i];
 			b2 -= lr * dz2;
 			for(let i=0;i<6;i++){
 				const dh = dz2 * W2[i];
-				const dz1 = h[i] > 0 ? dh : 0; // dReLU
+				const dz1 = h[i] > 0 ? dh : 0;
 				W1[i][0] -= lr * dz1 * x[0];
 				W1[i][1] -= lr * dz1 * x[1];
 				W1[i][2] -= lr * dz1 * x[2];
@@ -77,15 +94,19 @@
 		return mse / data.length;
 	}
 
-	function makeDataset(n=200){
-		// Reglas sintéticas: regar si humedad baja y (alta temp o poca lluvia)
+	function makeDataset(n=500){
+		// Importancias del usuario (0..1)
+		const wh = Number(document.getElementById('w_h').value)/100;
+		const wt = Number(document.getElementById('w_t').value)/100;
+		const wr = Number(document.getElementById('w_r').value)/100;
 		const data = [];
 		for(let i=0;i<n;i++){
-			const h = Math.random(); // 0..1
-			const t = Math.random(); // 0..1
-			const r = Math.random(); // 0..1
-			const should = (h < 0.45 && (t > 0.55 || r < 0.4)) || (h < 0.3);
-			const y = should ? 1 : 0;
+			const h = Math.random();
+			const t = Math.random();
+			const r = Math.random();
+			// regla ponderada: combinar señales según importancia
+			const score = (1-h)*wh + t*wt + (1-r)*wr; // mayor score => regar
+			const y = score > 0.6 ? 1 : 0;
 			data.push({ x: [h,t,r], t: y });
 		}
 		return data;
@@ -108,9 +129,9 @@
 	}));
 
 	document.getElementById('train').addEventListener('click', ()=>{
-		const data = makeDataset(400);
+		const data = makeDataset(600);
 		let last = 0;
-		for(let e=0;e<200;e++) last = trainEpoch(data);
+		for(let e=0;e<300;e++) last = trainEpoch(data);
 		lossEl.textContent = last.toFixed(4);
 	});
 

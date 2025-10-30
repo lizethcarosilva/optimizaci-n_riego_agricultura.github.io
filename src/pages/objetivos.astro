@@ -29,11 +29,16 @@ const pageTitle = "Objetivos";
 			const boxes = Array.from(document.querySelectorAll('.chk'));
 			const correct = boxes.filter(b=> b.dataset.correct==='1');
 			const ok = boxes.every(b => (b.dataset.correct === '1') === b.checked);
-			boxes.forEach(b=>{
-				b.parentElement.style.background = (b.dataset.correct==='1') ? '#e8f5e9' : '#ffebee';
-			});
-			const lista = correct.map(b=> b.parentElement.textContent.trim()).join(' · ');
-			document.getElementById('chkOut').textContent = ok ? '✅ Correcto.' : `Respuestas correctas: ${lista}`;
+			boxes.forEach(b=>{ b.parentElement.style.background = (b.dataset.correct==='1') ? '#e8f5e9' : '#ffebee'; });
+			document.getElementById('chkOut').textContent = ok ? '✅ Correcto.' : `Respuestas correctas: ${correct.map(b=> b.parentElement.textContent.trim()).join(' · ')}`;
 		};
 	</script>
+	<div class="card" style="margin-top:1rem;background:#f8fbf9;border:1px solid #e0e0e0;border-radius:12px;padding:1rem;">
+		<strong>Retroalimentación</strong>
+		<ul>
+			<li>Los objetivos específicos deben ser medibles, realistas y alineados al general.</li>
+			<li>Evita metas comerciales si el objetivo es técnico/ambiental.</li>
+			<li>Relaciona cada objetivo con una etapa de la metodología.</li>
+		</ul>
+	</div>
 </Page>
