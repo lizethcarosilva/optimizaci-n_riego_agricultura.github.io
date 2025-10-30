@@ -1,13 +1,13 @@
 <section id="quiz" style="padding:2rem;max-width:900px;margin:0 auto;">
 	<h2 style="margin:0 0 0.5rem 0;">Juego: ¿Cuánta agua usarías hoy?</h2>
-	<p style="margin:0 0 1rem 0;">Elige una opción y compara con la predicción inteligente.</p>
+	<p style="margin:0 0 1rem 0;">Elige una opción y compara con la predicción inteligente. Consejo: riega solo si el suelo está seco y no lloverá.</p>
 	<div style="display:flex;gap:0.75rem;flex-wrap:wrap;">
-		<button class="opt" data-v="0" style="padding:0.6rem 0.9rem;border-radius:10px;border:1px solid #ccc;background:#fff;cursor:pointer;">0 L/m²</button>
-		<button class="opt" data-v="3" style="padding:0.6rem 0.9rem;border-radius:10px;border:1px solid #ccc;background:#fff;cursor:pointer;">3 L/m²</button>
-		<button class="opt" data-v="6" style="padding:0.6rem 0.9rem;border-radius:10px;border:1px solid #ccc;background:#fff;cursor:pointer;">6 L/m²</button>
-		<button class="opt" data-v="10" style="padding:0.6rem 0.9rem;border-radius:10px;border:1px solid #ccc;background:#fff;cursor:pointer;">10 L/m²</button>
+		<button class="opt" data-v="0" style="padding:0.6rem 0.9rem;border-radius:10px;border:1px solid #9e9e9e;background:#ffffff;color:#111;cursor:pointer;">0 L/m²</button>
+		<button class="opt" data-v="3" style="padding:0.6rem 0.9rem;border-radius:10px;border:1px solid #9e9e9e;background:#ffffff;color:#111;cursor:pointer;">3 L/m²</button>
+		<button class="opt" data-v="6" style="padding:0.6rem 0.9rem;border-radius:10px;border:1px solid #9e9e9e;background:#ffffff;color:#111;cursor:pointer;">6 L/m²</button>
+		<button class="opt" data-v="10" style="padding:0.6rem 0.9rem;border-radius:10px;border:1px solid #9e9e9e;background:#ffffff;color:#111;cursor:pointer;">10 L/m²</button>
 	</div>
-	<div id="quizResult" style="margin-top:0.75rem;border:1px solid #e0e0e0;border-radius:12px;padding:1rem;background:#fafafa;">
+	<div id="quizResult" style="margin-top:0.75rem;border:1px solid #e0e0e0;border-radius:12px;padding:1rem;background:#fafafa;color:#111;">
 		<em>Selecciona una opción.</em>
 	</div>
 </section>
@@ -15,11 +15,13 @@
 	const opts = Array.from(document.querySelectorAll('.opt'));
 	const result = document.getElementById('quizResult');
 	function predict(){
-		// Predicción simple: día templado, humedad media, sin lluvia -> 4 L/m²
+		// Predicción simple base
 		return 4 + Math.round((Math.random()-0.5)*2);
 	}
 	opts.forEach(btn => {
 		btn.addEventListener('click', ()=>{
+			opts.forEach(b=>{b.style.background='#fff';});
+			btn.style.background = '#e8f5e9';
 			const user = Number(btn.dataset.v);
 			const ai = predict();
 			const diff = Math.abs(user - ai);

@@ -6,6 +6,8 @@ import AIQuiz from "../components/AIQuiz.astro";
 import ResultsCharts from "../components/ResultsCharts.astro";
 import ImpactCalculator from "../components/ImpactCalculator.astro";
 import Team from "../components/Team.astro";
+import Theory from "../components/Theory.astro";
+import SensorSim from "../components/SensorSim.astro";
 ---
 
 <html lang="es">
@@ -28,8 +30,10 @@ import Team from "../components/Team.astro";
 			<div class="container" style="display:flex;align-items:center;justify-content:space-between;">
 				<strong>OPTIMIZACIÓN DE RIEGO</strong>
 				<nav>
+					<a href="#teoria">Teoría</a>
 					<a href="#problema">Problema</a>
 					<a href="#simulador">Simulador</a>
+					<a href="#sensor">Sensor</a>
 					<a href="#quiz">Juego</a>
 					<a href="#resultados">Resultados</a>
 					<a href="#calculadora">Calculadora</a>
@@ -40,8 +44,10 @@ import Team from "../components/Team.astro";
 
 		<main>
 			<Hero />
+			<Theory />
 			<ProblemWater />
 			<SystemSimulator />
+			<SensorSim />
 			<AIQuiz />
 			<ResultsCharts />
 			<ImpactCalculator />

@@ -1,27 +1,28 @@
 <section id="simulador" style="padding:2rem;max-width:1000px;margin:0 auto;">
 	<h2 style="margin:0 0 0.5rem 0;">Simulador de riego inteligente</h2>
-	<p style="margin:0 0 1rem 0;">Ajusta variables y observa la decisión del sistema.</p>
+	<p style="margin:0 0 1rem 0;">Ajusta variables y observa la decisión del sistema. Se riega si el suelo está seco o si hará calor y no lloverá.</p>
 	<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;align-items:start;">
-		<div style="border:1px solid #e0e0e0;border-radius:12px;padding:1rem;background:#fff;">
+		<div style="border:1px solid #e0e0e0;border-radius:12px;padding:1rem;background:#fff;color:#111;">
 			<label for="hum">Humedad del suelo (%)</label>
-			<input id="hum" type="range" min="0" max="100" value="45" style="width:100%" />
-			<div><small id="humVal">45%</small></div>
+			<input id="hum" type="range" min="0" max="100" value="35" style="width:100%" />
+			<div><small id="humVal">35%</small></div>
 		</div>
-		<div style="border:1px solid #e0e0e0;border-radius:12px;padding:1rem;background:#fff;">
+		<div style="border:1px solid #e0e0e0;border-radius:12px;padding:1rem;background:#fff;color:#111;">
 			<label for="temp">Temperatura (°C)</label>
-			<input id="temp" type="range" min="0" max="45" value="28" style="width:100%" />
-			<div><small id="tempVal">28°C</small></div>
+			<input id="temp" type="range" min="0" max="45" value="29" style="width:100%" />
+			<div><small id="tempVal">29°C</small></div>
 		</div>
-		<div style="border:1px solid #e0e0e0;border-radius:12px;padding:1rem;background:#fff;">
+		<div style="border:1px solid #e0e0e0;border-radius:12px;padding:1rem;background:#fff;color:#111;">
 			<label for="rain">Probabilidad de lluvia (%)</label>
-			<input id="rain" type="range" min="0" max="100" value="30" style="width:100%" />
-			<div><small id="rainVal">30%</small></div>
+			<input id="rain" type="range" min="0" max="100" value="20" style="width:100%" />
+			<div><small id="rainVal">20%</small></div>
 		</div>
 	</div>
-	<div id="decision" style="margin-top:1rem;border:2px dashed #81c784;border-radius:12px;padding:1rem;background:#f1f8e9;display:flex;justify-content:space-between;gap:1rem;align-items:center;">
+	<div id="decision" style="margin-top:1rem;border:2px dashed #81c784;border-radius:12px;padding:1rem;background:#f1f8e9;display:flex;justify-content:space-between;gap:1rem;align-items:center;color:#111;">
 		<div>
 			<div style="font-weight:700;">Riego:</div>
 			<div id="status">Calculando...</div>
+			<small id="reason"></small>
 		</div>
 		<div>
 			<div style="font-weight:700;">Caudal recomendado:</div>
@@ -39,6 +40,7 @@
 	const rainVal = document.getElementById('rainVal');
 	const status = document.getElementById('status');
 	const flow = document.getElementById('flow');
+	const reason = document.getElementById('reason');
 
 	function decide(){
 		const h = Number(hum.value);
@@ -47,10 +49,14 @@
 		humVal.textContent = `${h}%`;
 		tempVal.textContent = `${t}°C`;
 		rainVal.textContent = `${r}%`;
-		// Heurística simple: menos de 40% humedad y temperatura>24 y lluvia<50 -> regar
-		const shouldIrrigate = (h < 40 && t > 24 && r < 50) || (h < 30);
+		// Heurística: regar si humedad<45% y (temperatura>26 o lluvia<40). Siempre regar si humedad<30.
+		const veryDry = h < 30;
+		const warm = t > 26;
+		const lowRain = r < 40;
+		const shouldIrrigate = veryDry || (h < 45 && (warm || lowRain));
 		status.textContent = shouldIrrigate ? 'Activado' : 'No necesario hoy';
-		const flowLitersHour = shouldIrrigate ? Math.round((40 - h + (t-20)*0.6) * (1 - r/150) + 5) : 0;
+		reason.textContent = shouldIrrigate ? 'Motivo: suelo seco y/o calor sin lluvia cercana.' : 'Motivo: humedad suficiente o probabilidad de lluvia.';
+		const flowLitersHour = shouldIrrigate ? Math.round((45 - h + (t-20)*0.5) * (1 - r/150) + 5) : 0;
 		flow.textContent = shouldIrrigate ? `${Math.max(flowLitersHour, 3)} L/h` : '0 L/h';
 	}
 	[hum,temp,rain].forEach(el=> el.addEventListener('input', decide));

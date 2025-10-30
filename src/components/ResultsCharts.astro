@@ -1,37 +1,41 @@
 <section id="resultados" style="padding:2rem;max-width:1000px;margin:0 auto;">
 	<h2 style="margin:0 0 0.5rem 0;">Resultados esperados</h2>
 	<p style="margin:0 0 1rem 0;">Comparación entre riego tradicional e inteligente.</p>
-	<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem;">
-		<canvas id="chartAgua" height="200"></canvas>
-		<canvas id="chartProd" height="200"></canvas>
+	<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem;align-items:start;">
+		<canvas id="chartAgua" height="220" style="background:#fff;border:1px solid #e0e0e0;border-radius:12px;padding:0.5rem;"></canvas>
+		<canvas id="chartProd" height="220" style="background:#fff;border:1px solid #e0e0e0;border-radius:12px;padding:0.5rem;"></canvas>
 	</div>
 </section>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <script>
-	const aguaCtx = document.getElementById('chartAgua');
-	const prodCtx = document.getElementById('chartProd');
-	new Chart(aguaCtx, {
-		type: 'bar',
-		data: {
-			labels: ['Tradicional', 'Inteligente'],
-			datasets: [{
-				label: 'Consumo de agua (m³/ha)',
-				data: [100, 50],
-				backgroundColor: ['#90caf9','#66bb6a']
-			}]
-		},
-		options: { plugins: { legend: { display: false } } }
-	});
-	new Chart(prodCtx, {
-		type: 'bar',
-		data: {
-			labels: ['Antes', 'Después'],
-			datasets: [{
-				label: 'Productividad (%)',
-				data: [100, 120],
-				backgroundColor: ['#b0bec5','#a5d6a7']
-			}]
-		},
-		options: { plugins: { legend: { display: false } } }
-	});
+	(function(){
+		if(!window.Chart){ return; }
+		const aguaCtx = document.getElementById('chartAgua');
+		const prodCtx = document.getElementById('chartProd');
+		if(!aguaCtx || !prodCtx){ return; }
+		new Chart(aguaCtx, {
+			type: 'bar',
+			data: {
+				labels: ['Tradicional', 'Inteligente'],
+				datasets: [{
+					label: 'Consumo de agua (m³/ha)',
+					data: [100, 50],
+					backgroundColor: ['#90caf9','#66bb6a']
+				}]
+			},
+			options: { plugins: { legend: { display: false } }, scales: { y: { ticks: { color: '#111' } , grid: { color: '#eee' } }, x: { ticks: { color: '#111' } } } }
+		});
+		new Chart(prodCtx, {
+			type: 'bar',
+			data: {
+				labels: ['Antes', 'Después'],
+				datasets: [{
+					label: 'Productividad (%)',
+					data: [100, 120],
+					backgroundColor: ['#b0bec5','#a5d6a7']
+				}]
+			},
+			options: { plugins: { legend: { display: false } }, scales: { y: { ticks: { color: '#111' }, grid: { color: '#eee' } }, x: { ticks: { color: '#111' } } } }
+		});
+	})();
 </script>

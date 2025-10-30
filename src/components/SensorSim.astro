@@ -1,0 +1,50 @@
+<section id="sensor" style="padding:2rem;max-width:1000px;margin:0 auto;">
+	<h2 style="margin:0 0 0.5rem 0;">Simulación de sensor y actuador</h2>
+	<p style="margin:0 0 1rem 0;">Emula un sensor de humedad del suelo y una bomba (válvula). Puedes agregar “lluvia” para ver cómo reacciona el sistema.</p>
+	<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem;align-items:start;">
+		<div style="border:1px solid #e0e0e0;border-radius:12px;padding:1rem;background:#fff;color:#111;">
+			<div style="font-weight:700;margin-bottom:0.5rem;">Lectura del sensor</div>
+			<div style="display:flex;align-items:center;gap:0.75rem;">
+				<div style="width:140px;height:30px;border:1px solid #ccc;border-radius:6px;position:relative;background:linear-gradient(90deg,#81c784 var(--pct,30%),#e0e0e0 var(--pct,30%));" id="bar"></div>
+				<div><strong id="val">30%</strong></div>
+			</div>
+			<small>LCD: <span id="lcd">Temp: 26°C · Hum: 30%</span></small>
+		</div>
+		<div style="border:1px solid #e0e0e0;border-radius:12px;padding:1rem;background:#fff;color:#111;">
+			<div style="font-weight:700;margin-bottom:0.5rem;">Controles</div>
+			<label style="display:block;margin-bottom:0.5rem;">Simular lluvia (+5%)
+				<button id="rainBtn" style="margin-left:0.5rem;padding:0.4rem 0.7rem;border-radius:8px;border:1px solid #9e9e9e;background:#e3f2fd;color:#111;cursor:pointer;">Lluvia</button>
+			</label>
+			<label style="display:block;margin-bottom:0.5rem;">Secar suelo (-5%)
+				<button id="dryBtn" style="margin-left:0.5rem;padding:0.4rem 0.7rem;border-radius:8px;border:1px solid #9e9e9e;background:#fff3e0;color:#111;cursor:pointer;">Sol</button>
+			</label>
+			<div style="margin-top:0.5rem;">
+				<strong>Bomba:</strong> <span id="pump">Apagada</span>
+			</div>
+		</div>
+	</div>
+</section>
+<script>
+	let moisture = 30; // %
+	let temp = 26; // °C fijo simple
+	const bar = document.getElementById('bar');
+	const val = document.getElementById('val');
+	const pump = document.getElementById('pump');
+	const lcd = document.getElementById('lcd');
+	function clamp(x){ return Math.max(0, Math.min(100, x)); }
+	function render(){
+		bar.style.setProperty('--pct', moisture+'%');
+		val.textContent = moisture+'%';
+		const shouldPump = moisture < 35; // umbral de riego
+		pump.textContent = shouldPump ? 'Encendida' : 'Apagada';
+		pump.style.color = shouldPump ? '#2e7d32' : '#111';
+		lcd.textContent = `Temp: ${temp}°C · Hum: ${moisture}%`;
+	}
+	document.getElementById('rainBtn').addEventListener('click', ()=>{ moisture = clamp(moisture+5); render(); });
+	document.getElementById('dryBtn').addEventListener('click', ()=>{ moisture = clamp(moisture-5); render(); });
+	setInterval(()=>{ // deriva natural
+		moisture = clamp(moisture + (Math.random()<0.5?-1:1));
+		render();
+	}, 1500);
+	render();
+</script>
