@@ -3,12 +3,36 @@ const { title = 'Smart Irrigation Tolima' } = Astro.props;
 const site = new URL(Astro.site);
 const basePath = site.pathname.endsWith('/') ? site.pathname : site.pathname + '/';
 
-function withBase(path = '/') {
+function withBase(path = '') {
 	const normalized = path.startsWith('/') ? path.slice(1) : path;
 	return basePath + normalized;
 }
+
+const navItems = [
+	{ label: 'Inicio', path: '', exact: true },
+	{ label: 'Justificación', path: 'justificacion' },
+	{ label: 'Problema', path: 'problema' },
+	{ label: 'Objetivos', path: 'objetivos' },
+	{ label: 'Marco teórico', path: 'marco-teorico' },
+	{ label: 'Metodología', path: 'metodologia' },
+	{ label: 'Resultados', path: 'resultados-esperados' },
+	{ label: 'Referencias', path: 'referencias' },
+	{ label: 'Actividades', path: 'actividades' }
+];
+
+const currentPath = Astro.url.pathname.replace(basePath, '/');
+
+function hrefFor(path = '') {
+	return withBase(path);
+}
+
+function activeClass(path = '', exact = false) {
+	const target = path ? `/${path}` : '/';
+	const isActive = exact ? currentPath === target : currentPath.startsWith(target);
+	return isActive ? 'active' : '';
+}
+
 const favicon = withBase('favicon.svg');
-const baseJson = JSON.stringify(basePath);
 ---
 <html lang="es">
 	<head>
@@ -17,7 +41,7 @@ const baseJson = JSON.stringify(basePath);
 		<meta name="viewport" content="width=device-width" />
 		<title>{title}</title>
 		<style>
-			:root{color-scheme:light dark; --bg1:#f0f9f4; --bg2:#e3f2fd; --text:#0f1b14; --card:#ffffff; --muted:#5f6368; --brand:#2e7d32; --brand2:#43a047; --accent:#9ccc65; --border:#d7e2d7}
+			:root{color-scheme:light dark; --bg1:#f0f9f4; --text:#0f1b14; --card:#ffffff; --muted:#5f6368; --brand:#2e7d32; --brand2:#43a047; --border:#d7e2d7}
 			body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,sans-serif;background:linear-gradient(180deg,var(--bg1) 0%,#f8fff9 100%);color:var(--text)}
 			header{padding:1.1rem;border-bottom:1px solid var(--border);background:linear-gradient(115deg,#e8f5e9 0%,#f1f8e9 60%,#e0f2f1 100%);position:sticky;top:0;z-index:10;backdrop-filter:saturate(120%) blur(6px)}
 			footer{padding:1rem;border-top:1px solid var(--border);background:#ffffffd9}
@@ -38,15 +62,9 @@ const baseJson = JSON.stringify(basePath);
 			<div class="container" style="display:flex;align-items:center;justify-content:space-between;gap:0.5rem;flex-wrap:wrap;">
 				<strong>OPTIMIZACIÓN DE RIEGO</strong>
 				<nav>
-					<a href={withBase()}>Inicio</a>
-					<a href={withBase('justificacion')}>Justificación</a>
-					<a href={withBase('problema')}>Problema</a>
-					<a href={withBase('objetivos')}>Objetivos</a>
-					<a href={withBase('marco-teorico')}>Marco teórico</a>
-					<a href={withBase('metodologia')}>Metodología</a>
-					<a href={withBase('resultados-esperados')}>Resultados</a>
-					<a href={withBase('referencias')}>Referencias</a>
-					<a href={withBase('actividades')}>Actividades</a>
+					{navItems.map((item) => (
+						<a href={hrefFor(item.path)} class={activeClass(item.path, item.exact)}>{item.label}</a>
+					))}
 				</nav>
 			</div>
 		</header>
@@ -59,22 +77,5 @@ const baseJson = JSON.stringify(basePath);
 				<a href="https://github.com/lizethcarosilva/optimizaci-n_riego_agricultura.github.io" target="_blank" rel="noopener">Código en GitHub</a>
 			</div>
 		</footer>
-		<script>
-			(function(){
-				try{
-					var base = ${baseJson};
-					var current = location.pathname;
-					var links = document.querySelectorAll('nav a');
-					links.forEach(function(a){
-						var href = a.getAttribute('href') || '';
-						if(!href) return;
-						var normalized = href.replace(base,'/');
-						var path = current.replace(base,'/');
-						if(normalized === '/' && path === '/') a.classList.add('active');
-						else if(normalized !== '/' && path.startsWith(normalized)) a.classList.add('active');
-					});
-				}catch(e){}
-			})();
-		</script>
 	</body>
 </html>
