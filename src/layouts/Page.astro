@@ -1,5 +1,7 @@
 ---
 const { title = 'Smart Irrigation Tolima' } = Astro.props;
+const base = new URL('/', Astro.site).pathname; // e.g., /optimizaci-n_riego_agricultura.github.io/
+function href(path){ return new URL(path, Astro.site).pathname; }
 ---
 <html lang="es">
 	<head>
@@ -8,12 +10,17 @@ const { title = 'Smart Irrigation Tolima' } = Astro.props;
 		<meta name="viewport" content="width=device-width" />
 		<title>{title}</title>
 		<style>
-			:root{color-scheme:light dark}
-			body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,sans-serif;background:#fafafa;color:#1b1b1b}
-			header,footer{padding:0.75rem 1rem}
-			nav a{color:inherit;text-decoration:none;margin-right:0.75rem}
+			:root{color-scheme:light dark; --bg:#f7f9fb; --text:#1b1b1b; --card:#ffffff; --muted:#5f6368; --brand:#2e7d32; --border:#e0e0e0}
+			body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,sans-serif;background:var(--bg);color:var(--text)}
+			header{padding:0.9rem 1rem;border-bottom:1px solid var(--border);background:#fff;position:sticky;top:0;z-index:10}
+			footer{padding:1rem;border-top:1px solid var(--border);background:#fff}
+			nav a{color:inherit;text-decoration:none;margin-right:0.75rem;padding:0.35rem 0.55rem;border-radius:8px}
+			nav a:hover{background:#eef3f0}
 			.container{max-width:1100px;margin:0 auto;padding:0 0.5rem}
-			main{padding:1rem}
+			main{padding:1.25rem}
+			.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem}
+			.btn{padding:0.55rem 0.9rem;border-radius:10px;border:1px solid var(--brand);background:var(--brand);color:#fff;text-decoration:none}
+			.btn--ghost{border:1px solid var(--border);background:#fff;color:var(--text)}
 		</style>
 	</head>
 	<body>
@@ -21,15 +28,15 @@ const { title = 'Smart Irrigation Tolima' } = Astro.props;
 			<div class="container" style="display:flex;align-items:center;justify-content:space-between;gap:0.5rem;flex-wrap:wrap;">
 				<strong>OPTIMIZACIÓN DE RIEGO</strong>
 				<nav>
-					<a href="/">Inicio</a>
-					<a href="/justificacion">Justificación</a>
-					<a href="/problema">Problema</a>
-					<a href="/objetivos">Objetivos</a>
-					<a href="/marco-teorico">Marco teórico</a>
-					<a href="/metodologia">Metodología</a>
-					<a href="/resultados-esperados">Resultados</a>
-					<a href="/referencias">Referencias</a>
-					<a href="/actividades">Actividades</a>
+					<a href={href('/')}>Inicio</a>
+					<a href={href('/justificacion')}>Justificación</a>
+					<a href={href('/problema')}>Problema</a>
+					<a href={href('/objetivos')}>Objetivos</a>
+					<a href={href('/marco-teorico')}>Marco teórico</a>
+					<a href={href('/metodologia')}>Metodología</a>
+					<a href={href('/resultados-esperados')}>Resultados</a>
+					<a href={href('/referencias')}>Referencias</a>
+					<a href={href('/actividades')}>Actividades</a>
 				</nav>
 			</div>
 		</header>

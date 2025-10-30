@@ -1,5 +1,6 @@
 ---
 import Page from "../layouts/Page.astro";
+const to = (p)=> new URL(p, Astro.site).pathname;
 ---
 <Page title="Optimización de riego agrícola con IA e IoT">
 	<h1 style="margin:0 0 0.5rem 0;">OPTIMIZACIÓN DE RIEGO EN AGRICULTURA</h1>
@@ -19,7 +20,7 @@ import Page from "../layouts/Page.astro";
 		</div>
 	</div>
 	<div style="display:flex;flex-wrap:wrap;gap:0.5rem;">
-		<a href="/justificacion" style="padding:0.6rem 0.9rem;border-radius:10px;border:1px solid #2e7d32;background:#2e7d32;color:#fff;text-decoration:none;">Ir a Justificación</a>
-		<a href="/actividades" style="padding:0.6rem 0.9rem;border-radius:10px;border:1px solid #9e9e9e;text-decoration:none;color:#111;background:#fff;">Ver Actividades</a>
+		<a href={to('/justificacion')} class="btn">Ir a Justificación</a>
+		<a href={to('/actividades')} class="btn btn--ghost">Ver Actividades</a>
 	</div>
 </Page>
