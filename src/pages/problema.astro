@@ -1,17 +1,116 @@
 ---
 import Page from "../layouts/Page.astro";
-const pageTitle = "Problema";
+const pageTitle = "Problema Ambiental";
 ---
+
 <Page title={pageTitle}>
-	<h1 style="margin:0 0 1rem 0;">Problema ambiental</h1>
-	<p>El riego tradicional, manual o por temporizador, rara vez considera la humedad real del suelo ni la probabilidad de lluvia. Esto genera <strong>sobre riego</strong> (lixiviación de nutrientes, eutrofización) o <strong>déficit hídrico</strong> (estrés del cultivo, menor rendimiento). En papa (Cundinamarca) se midió un exceso cercano a 5.000 m³/ha (Bonilla & López, 2015).</p>
-	<p>Intervenir es necesario para: 1) reducir consumo de agua sin afectar productividad; 2) evitar contaminación por escorrentía; 3) disminuir costos de riego y energía; 4) aumentar resiliencia climática.</p>
-	<div class="card" style="margin-top:1rem;background:#fff8f8;border:1px solid #f1d0d0;border-radius:12px;padding:1rem;">
-		<strong>Retroalimentación</strong>
-		<ul>
-			<li>Exceso de riego = pérdida de nutrientes y contaminación.</li>
-			<li>Déficit de riego = estrés y menor rendimiento.</li>
-			<li>La solución pasa por medir y decidir con datos (sensores + IA).</li>
-		</ul>
-	</div>
+  <section class="max-w-5xl mx-auto">
+    <h1 class="text-4xl font-bold text-emerald-900 mb-10 text-center">
+      🌍 Problema Ambiental
+    </h1>
+
+    <!-- Introducción general -->
+    <div class="bg-emerald-50 border border-emerald-100 rounded-2xl p-6 shadow-sm mb-8">
+      <p class="text-neutral-800 text-justify mb-4">
+        En el campo, muchos agricultores todavía riegan sus cultivos de forma tradicional, 
+        usando horarios fijos o simplemente basándose en la experiencia. 
+        El problema es que este método no tiene en cuenta cuánta agua realmente necesita el suelo 
+        o si va a llover pronto. 
+      </p>
+      <p class="text-neutral-800 text-justify">
+        Como resultado, se termina usando mucha más agua de la necesaria. 
+        En un estudio en cultivos de papa en Cundinamarca, por ejemplo, 
+        se descubrió que se aplicaba casi el doble de agua que las plantas requerían.  
+        Esto no solo representa un desperdicio enorme, sino que también afecta el suelo, 
+        los ríos y el bolsillo del agricultor.
+      </p>
+    </div>
+
+    <!-- Problemática general -->
+    <h2 class="text-2xl font-semibold text-emerald-800 mb-6 border-b border-emerald-200 pb-2">
+      🌿 ¿Cuál es el verdadero problema?
+    </h2>
+    <p class="text-neutral-800 text-justify mb-8">
+      Cuando el riego no se controla adecuadamente, se produce un círculo de consecuencias negativas: 
+      se desperdicia agua, se contaminan los cuerpos hídricos, el suelo pierde calidad 
+      y los cultivos se vuelven menos productivos.  
+      Todo esto pone en riesgo el equilibrio ambiental y la seguridad alimentaria.
+    </p>
+
+    <!-- Secciones visuales -->
+    <div class="grid sm:grid-cols-2 gap-6 mb-10">
+
+      <!-- Desperdicio de agua -->
+      <div class="bg-white border border-emerald-100 rounded-2xl p-5 shadow-sm hover:shadow-md transition">
+        <h3 class="text-xl font-semibold text-emerald-800 mb-3">💧 Desperdicio de agua</h3>
+        <p class="text-neutral-700 text-justify">
+          Muchos cultivos son regados “por calendario”, sin revisar si el suelo realmente necesita agua.  
+          Esto provoca que se apliquen miles de litros de más, 
+          los cuales simplemente se pierden por evaporación o escorrentía.  
+          Es como llenar un vaso que ya está lleno.
+        </p>
+      </div>
+
+      <!-- Contaminación del agua -->
+      <div class="bg-white border border-emerald-100 rounded-2xl p-5 shadow-sm hover:shadow-md transition">
+        <h3 class="text-xl font-semibold text-emerald-800 mb-3">🌊 Contaminación del agua</h3>
+        <p class="text-neutral-700 text-justify">
+          Cuando se riega en exceso, el agua arrastra fertilizantes y químicos hacia ríos y quebradas, 
+          contaminándolos.  
+          Esto causa la proliferación de algas y la muerte de peces, afectando ecosistemas enteros.
+        </p>
+      </div>
+
+      <!-- Degradación del suelo -->
+      <div class="bg-white border border-emerald-100 rounded-2xl p-5 shadow-sm hover:shadow-md transition">
+        <h3 class="text-xl font-semibold text-emerald-800 mb-3">🌾 Deterioro del suelo</h3>
+        <p class="text-neutral-700 text-justify">
+          El exceso de agua compacta el suelo, elimina el aire que necesitan las raíces y 
+          puede dejar una capa dura donde el agua ya no penetra.  
+          Esto reduce la fertilidad y, con el tiempo, baja la productividad de los cultivos.
+        </p>
+      </div>
+
+      <!-- Agotamiento de acuíferos -->
+      <div class="bg-white border border-emerald-100 rounded-2xl p-5 shadow-sm hover:shadow-md transition">
+        <h3 class="text-xl font-semibold text-emerald-800 mb-3">🏞️ Agotamiento de fuentes de agua</h3>
+        <p class="text-neutral-700 text-justify">
+          Extraer más agua de la que la naturaleza puede reponer provoca que los pozos y ríos 
+          se vayan secando poco a poco.  
+          En algunas zonas agrícolas de Colombia, los niveles del agua subterránea 
+          están bajando entre 1 y 3 metros cada año.
+        </p>
+      </div>
+    </div>
+
+    <!-- Relevancia ecológica -->
+    <div class="bg-emerald-50 border border-emerald-100 rounded-2xl p-6 shadow-sm mb-10">
+      <h3 class="text-2xl font-semibold text-emerald-900 mb-3">🌱 ¿Por qué es importante?</h3>
+      <p class="text-neutral-800 text-justify mb-3">
+        El agua es la base de toda la vida. Si la usamos mal, no solo ponemos en riesgo los cultivos, 
+        sino también los ecosistemas que dependen de ella.  
+        Optimizar el riego no es solo una cuestión técnica, sino una forma de cuidar 
+        nuestro planeta y garantizar el futuro de la agricultura.
+      </p>
+      <p class="text-neutral-800 text-justify">
+        Este proyecto busca demostrar que la tecnología puede ayudarnos a usar el agua 
+        con inteligencia y responsabilidad, asegurando que cada gota cuente.
+      </p>
+    </div>
+
+    <!-- Llamado a la acción -->
+    <div class="bg-emerald-100 border border-emerald-200 rounded-2xl p-6 shadow-md">
+      <h3 class="text-2xl font-semibold text-emerald-900 mb-4">🚨 La necesidad de actuar</h3>
+      <ul class="list-disc ml-6 text-neutral-800 space-y-2">
+        <li>El cambio climático está reduciendo la disponibilidad de agua en muchas regiones.</li>
+        <li>La demanda de alimentos crece cada año, y debemos producir más con menos recursos.</li>
+        <li>Los métodos tradicionales de riego ya no son sostenibles.</li>
+        <li>Hoy tenemos tecnología accesible y económica que puede hacer la diferencia.</li>
+      </ul>
+      <p class="text-neutral-800 mt-4">
+        Por eso, optimizar el riego con inteligencia artificial no es un lujo, 
+        es una necesidad para garantizar la sostenibilidad y la vida en el campo.
+      </p>
+    </div>
+  </section>
 </Page>

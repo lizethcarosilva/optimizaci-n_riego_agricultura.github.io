@@ -1,206 +1,496 @@
----
----
----
-<section style="padding:2rem;max-width:1000px;margin:0 auto;">
-	<h2 style="margin:0 0 0.5rem 0;">Simulador de red neuronal (demo)</h2>
-	<p style="margin:0 0 1rem 0;">Entrena una red 3→6→1 con datos sintéticos o <strong>carga un modelo entrenado</strong> desde Python (JSON con W1,b1,W2,b2). Puedes cambiar la <strong>importancia</strong> de cada indicador al crear los datos de entrenamiento.</p>
-	<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;align-items:start;">
-		<div class="card" style="background:#fff;border:1px solid #e0e0e0;border-radius:12px;padding:1rem;">
-			<h4 style="margin:0 0 0.5rem 0;">Entrada actual</h4>
-			<label>Humedad (%)
-				<input id="x_h" type="range" min="0" max="100" value="35" style="width:100%"/>
+
+<section class="nn-container">
+	<h2>🌱 Simulador de Red Neuronal para Riego Inteligente</h2>
+
+	<div class="intro">
+		<p><strong>¿Qué hace este simulador?</strong></p>
+		<p>Este sistema aprende a decidir cuándo regar basándose en tres factores: humedad del suelo, temperatura y probabilidad de lluvia. Los "pesos" controlan cuánta importancia le da la red neuronal a cada sensor. ¡Experimenta y observa cómo aprende!</p>
+	</div>
+
+	<div class="grid">
+		<!-- ENTRADAS -->
+		<div class="card">
+			<h4>🌤️ Condiciones Actuales del Cultivo</h4>
+			<label>
+				Humedad del Suelo (%)
+				<span class="value-display" id="x_h_v">35%</span>
 			</label>
-			<div><small id="x_h_v">35%</small></div>
-			<label>Temperatura (°C)
-				<input id="x_t" type="range" min="0" max="45" value="28" style="width:100%"/>
+			<input id="x_h" type="range" min="0" max="100" value="35" />
+			<small style="color: #777;">💡 Si baja de 35% → Necesita riego urgente</small>
+
+			<label>
+				Temperatura Ambiente (°C)
+				<span class="value-display" id="x_t_v">28°C</span>
 			</label>
-			<div><small id="x_t_v">28°C</small></div>
-			<label>Lluvia (%)
-				<input id="x_r" type="range" min="0" max="100" value="20" style="width:100%"/>
+			<input id="x_t" type="range" min="0" max="45" value="28" />
+			<small style="color: #777;">💡 A mayor temperatura → Más evaporación</small>
+
+			<label>
+				Probabilidad de Lluvia (%)
+				<span class="value-display" id="x_r_v">20%</span>
 			</label>
-			<div><small id="x_r_v">20%</small></div>
+			<input id="x_r" type="range" min="0" max="100" value="20" />
+			<small style="color: #777;">💡 Si lloverá pronto → No regar</small>
 		</div>
-		<div class="card" style="background:#fff;border:1px solid #e0e0e0;border-radius:12px;padding:1rem;">
-			<h4 style="margin:0 0 0.5rem 0;">Importancia de indicadores (entrenamiento)</h4>
-			<label>Importancia humedad (↓ humedad → regar)
-				<input id="w_h" type="range" min="0" max="100" value="60" style="width:100%"/>
+
+		<!-- PESOS -->
+		<div class="card">
+			<h4>⚙️ Importancia de Cada Sensor (Pesos)</h4>
+			<p style="font-size: 0.9rem; color: #666; margin-bottom: 15px;">
+				Estos valores controlan <strong>cuánto influye</strong> cada sensor en la decisión. Al cambiarlos y presionar "Entrenar", la red aprenderá con esa configuración.
+			</p>
+			<label>
+				Peso: Humedad del Suelo
+				<span class="weight-display" id="w_h_v">0.60</span>
 			</label>
-			<label>Importancia temperatura (↑ temperatura → regar)
-				<input id="w_t" type="range" min="0" max="100" value="50" style="width:100%"/>
+			<input id="w_h" type="range" min="0" max="100" value="60" />
+			<small style="color: #777;">↑ Más peso = Más prioridad a la humedad</small>
+
+			<label>
+				Peso: Temperatura
+				<span class="weight-display" id="w_t_v">0.50</span>
 			</label>
-			<label>Importancia lluvia (↓ lluvia → regar)
-				<input id="w_r" type="range" min="0" max="100" value="40" style="width:100%"/>
+			<input id="w_t" type="range" min="0" max="100" value="50" />
+			<small style="color: #777;">↑ Más peso = Más sensible al calor</small>
+
+			<label>
+				Peso: Lluvia
+				<span class="weight-display" id="w_r_v">0.40</span>
 			</label>
+			<input id="w_r" type="range" min="0" max="100" value="40" />
+			<small style="color: #777;">↑ Más peso = Más considera el pronóstico</small>
 		</div>
-		<div class="card" style="background:#fff;border:1px solid #e0e0e0;border-radius:12px;padding:1rem;">
-			<div style="display:flex;gap:0.5rem;flex-wrap:wrap;align-items:center;">
-				<button id="train" class="btn" style="padding:0.5rem 0.8rem;border-radius:10px;border:1px solid #2e7d32;background:#2e7d32;color:#fff;cursor:pointer;">Entrenar 300 épocas</button>
-				<button id="predict" class="btn btn--ghost" style="padding:0.5rem 0.8rem;border-radius:10px;border:1px solid #9e9e9e;background:#fff;cursor:pointer;">Predecir</button>
-				<label style="display:inline-flex;align-items:center;gap:0.4rem;cursor:pointer;">
-					<input id="fileJson" type="file" accept="application/json" style="display:none"/>
-					<span class="btn btn--ghost" style="padding:0.5rem 0.8rem;border:1px solid #9e9e9e;border-radius:10px;background:#fff;">Cargar modelo (JSON)</span>
-				</label>
-				<button id="rtToggle" class="btn btn--ghost" style="padding:0.5rem 0.8rem;border-radius:10px;border:1px solid #9e9e9e;background:#fff;cursor:pointer;">Tiempo real: OFF</button>
+
+		<!-- CONTROLES -->
+		<div class="card">
+			<h4>🎛️ Control del Sistema</h4>
+			<div class="buttons">
+				<button id="train" class="btn-train">📚 Entrenar Red</button>
+				<button id="predict" class="btn-predict">🔮 Predecir Ahora</button>
+				<button id="rtToggle" class="btn-realtime">⏯️ Simulación: OFF</button>
+				<button id="reset" class="btn-reset">🔄 Reiniciar Todo</button>
 			</div>
-			<div style="margin-top:0.5rem;font-size:0.9rem;color:#333;">
-				Formato esperado:
-				<code>&#123;&quot;W1&quot;: [[...6x3...]], &quot;b1&quot;: [6], &quot;W2&quot;: [6], &quot;b2&quot;: 0.0&#125;</code>
+
+			<div class="result">
+				<strong>📊 Épocas entrenadas:</strong> <span id="epochs">0</span><br/>
+				<strong>📉 Error (pérdida):</strong> <span id="loss">—</span><br/>
+				<strong>🧮 Salida de la red:</strong> <span id="yhat">—</span><br/>
 			</div>
-			<div style="margin-top:0.75rem;">
-				<strong>Pérdida (MSE):</strong> <span id="loss">—</span>
-			</div>
-			<div style="margin-top:0.5rem;">
-				<strong>Salida NN:</strong> <span id="yhat">—</span>
-				<br/>
-				<strong>Decisión:</strong> <span id="decision">—</span>
+
+			<div id="decisionBox" class="decision-box" style="display: none;">
+				<span id="decision">—</span>
 			</div>
 		</div>
 	</div>
-	<div class="card" style="margin-top:1rem;background:#f8fbf9;border:1px solid #e0e0e0;border-radius:12px;padding:1rem;">
-		<strong>Cómo leer el simulador:</strong>
+
+	<!-- GRÁFICO DE HISTÓRICO -->
+	<div class="chart-container">
+		<h4>📈 Histórico de Decisiones (Últimas 10 lecturas)</h4>
+		<canvas id="historyChart"></canvas>
+	</div>
+
+	<!-- TABLA DE HISTÓRICO -->
+	<div class="chart-container">
+		<h4>📋 Registro Detallado de Datos</h4>
+		<table id="historyTable">
+			<thead>
+				<tr>
+					<th>#</th>
+					<th>Humedad (%)</th>
+					<th>Temp. (°C)</th>
+					<th>Lluvia (%)</th>
+					<th>Salida NN</th>
+					<th>Decisión</th>
+				</tr>
+			</thead>
+			<tbody id="historyBody">
+				<tr><td colspan="6" style="text-align: center; color: #999;">No hay datos aún. Presiona "Predecir" o activa simulación.</td></tr>
+			</tbody>
+		</table>
+	</div>
+
+	<!-- EXPLICACIÓN -->
+	<div class="info-box">
+		<strong>🔍 ¿Qué sucede cuando cambias los pesos?</strong>
 		<ul>
-			<li>La red aprende una regla sintética con la importancia que selecciones o usa un <em>modelo Python</em> cargado.</li>
-			<li>Salida cercana a 1 → regar; cercana a 0 → no regar.</li>
-			<li>El modo <em>Tiempo real</em> cicla datos “quemados” cada 5 minutos (simula sensores).</li>
+			<li><strong>Peso de Humedad ALTO (0.8-1.0):</strong> La red priorizará mantener humedad alta. Regará aunque temperatura sea baja o vaya a llover.</li>
+			<li><strong>Peso de Temperatura ALTO (0.8-1.0):</strong> La red será muy sensible al calor. Regará más frecuentemente en días calurosos.</li>
+			<li><strong>Peso de Lluvia ALTO (0.8-1.0):</strong> La red evitará regar si hay pronóstico de lluvia, ahorrando agua.</li>
+			<li><strong>Pesos Balanceados (0.5-0.6 todos):</strong> La red considerará todos los factores por igual, tomando decisiones más equilibradas.</li>
 		</ul>
+		<p style="margin-top: 10px;"><strong>💡 Tip:</strong> Después de cambiar los pesos, presiona "Entrenar Red" para que el sistema aprenda con la nueva configuración. Luego presiona "Predecir" para ver cómo cambia la decisión.</p>
 	</div>
 </section>
-<script>
-	function randn(){ return (Math.random()*2-1)*0.1; }
-	function relu(x){ return Math.max(0,x); }
-	function sigmoid(x){ return 1/(1+Math.exp(-x)); }
-	function dsigmoid(y){ return y*(1-y); }
 
-	let W1 = Array.from({length:6}, ()=> [randn(),randn(),randn()]);
-	let b1 = Array.from({length:6}, ()=> randn());
-	let W2 = Array.from({length:6}, ()=> randn());
-	let b2 = randn();
+<style>
+	.nn-container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+	.nn-container h2 { color: #2e7d32; margin-bottom: 10px; }
+	.intro { background: #e8f5e9; border-left: 4px solid #2e7d32; padding: 15px; border-radius: 8px; margin-bottom: 20px; }
+	.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px; margin-bottom: 20px; }
+	.card { background: white; border: 1px solid #e0e0e0; border-radius: 12px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+	.card h4 { color: #333; margin-bottom: 15px; font-size: 1.1em; }
+	label { display: block; margin: 15px 0 5px; color: #555; font-weight: 500; }
+	input[type="range"] { width: 100%; cursor: pointer; }
+	button { padding: 10px 20px; border-radius: 8px; border: none; cursor: pointer; font-weight: 600; transition: all 0.3s; }
+	button:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+	.btn-train { background: #2e7d32; color: white; }
+	.btn-predict { background: #1976d2; color: white; }
+	.btn-realtime { background: #f57c00; color: white; }
+	.btn-reset { background: #d32f2f; color: white; }
+	.buttons { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 15px; }
+	.result { margin-top: 15px; padding: 15px; background: #f5f5f5; border-radius: 8px; }
+	.result strong { color: #333; }
+	.chart-container { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-top: 20px; }
+	canvas { max-height: 300px; }
+	.value-display { display: inline-block; background: #e3f2fd; padding: 4px 12px; border-radius: 6px; font-weight: 600; color: #1976d2; margin-left: 10px; }
+	.weight-display { display: inline-block; background: #fff3e0; padding: 4px 12px; border-radius: 6px; font-weight: 600; color: #f57c00; margin-left: 10px; }
+	.info-box { background: #fff9c4; border-left: 4px solid #fbc02d; padding: 15px; border-radius: 8px; margin-top: 15px; }
+	.info-box ul { margin-left: 20px; margin-top: 10px; }
+	.info-box li { margin: 8px 0; color: #555; }
+	.decision-box { padding: 20px; border-radius: 12px; text-align: center; font-size: 1.3em; font-weight: bold; margin-top: 15px; }
+	.decision-regar { background: linear-gradient(135deg, #2e7d32 0%, #66bb6a 100%); color: white; }
+	.decision-no-regar { background: linear-gradient(135deg, #757575 0%, #bdbdbd 100%); color: white; }
+	table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+	th, td { padding: 12px; text-align: left; border-bottom: 1px solid #e0e0e0; }
+	th { background: #f5f5f5; font-weight: 600; color: #333; }
+	tr:hover { background: #f9f9f9; }
+	.badge { display: inline-block; padding: 4px 10px; border-radius: 12px; font-size: 0.85em; font-weight: 600; }
+	.badge-regar { background: #c8e6c9; color: #2e7d32; }
+	.badge-no-regar { background: #e0e0e0; color: #616161; }
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
+<script is:inline>
+// @ts-nocheck
+	window.addEventListener('DOMContentLoaded', () => {
+	// ============================================================================
+	// FUNCIONES MATEMÁTICAS
+	// ============================================================================
+	const relu = x => Math.max(0, x);
+	const sigmoid = x => 1 / (1 + Math.exp(-x));
+	const dsigmoid = y => y * (1 - y);
+	const randn = () => (Math.random() * 2 - 1) * 0.1;
 	const lr = 0.01;
 
-	// Datos “quemados” para ciclo de 5 min (muestras representativas)
-	const samples = [
-		{h:42, t:26, r:10}, {h:38, t:30, r:15}, {h:55, t:22, r:80}, {h:28, t:33, r:5},
-		{h:47, t:27, r:40}, {h:35, t:29, r:20}, {h:60, t:24, r:70}, {h:32, t:31, r:12}
-	];
-	let sampleIdx = 0;
-	let rtTimer = null;
+	// ============================================================================
+	// RED NEURONAL
+	// ============================================================================
+	let W1 = Array.from({ length: 6 }, () => [randn(), randn(), randn()]);
+	let b1 = Array.from({ length: 6 }, () => randn());
+	let W2 = Array.from({ length: 6 }, () => randn());
+	let b2 = randn();
+	let totalEpochs = 0;
 
-	function setWeights(model){
-		if(!model) return;
-		if(model.W1 && model.b1 && model.W2 && (typeof model.b2 === 'number')){
-			W1 = model.W1; b1 = model.b1; W2 = model.W2; b2 = model.b2;
+	// ============================================================================
+	// HISTÓRICO
+	// ============================================================================
+	/** @type {{h:number;t:number;r:number;yhat:number;decision:number}[]} */
+	let history = [];
+	const MAX_HISTORY = 10;
+
+	// ============================================================================
+	// ELEMENTOS DOM (con verificación de null)
+	// ============================================================================
+	const hIn = document.getElementById("x_h");
+	const tIn = document.getElementById("x_t");
+	const rIn = document.getElementById("x_r");
+	const hv = document.getElementById("x_h_v");
+	const tv = document.getElementById("x_t_v");
+	const rv = document.getElementById("x_r_v");
+
+	const whIn = document.getElementById("w_h");
+	const wtIn = document.getElementById("w_t");
+	const wrIn = document.getElementById("w_r");
+	const whv = document.getElementById("w_h_v");
+	const wtv = document.getElementById("w_t_v");
+	const wrv = document.getElementById("w_r_v");
+
+	const lossEl = document.getElementById("loss");
+	const yhatEl = document.getElementById("yhat");
+	const decisionEl = document.getElementById("decision");
+	const decisionBox = document.getElementById("decisionBox");
+	const epochsEl = document.getElementById("epochs");
+	const rtBtn = document.getElementById("rtToggle");
+	const historyBody = document.getElementById("historyBody");
+
+	// ============================================================================
+	// GRÁFICO
+	// ============================================================================
+	const canvas = document.getElementById('historyChart');
+	const ctx = canvas ? canvas.getContext('2d') : null;
+	const ChartCtor = window.Chart;
+	const chart = new ChartCtor(ctx, {
+		type: 'line',
+		data: {
+			labels: [],
+			datasets: [
+				{
+					label: 'Humedad del Suelo (%)',
+					data: [],
+					borderColor: '#2e7d32',
+					backgroundColor: 'rgba(46, 125, 50, 0.1)',
+					tension: 0.4
+				},
+				{
+					label: 'Temperatura (°C)',
+					data: [],
+					borderColor: '#f57c00',
+					backgroundColor: 'rgba(245, 124, 0, 0.1)',
+					tension: 0.4
+				},
+				{
+					label: 'Decisión (0=No, 1=Sí)',
+					data: [],
+					borderColor: '#1976d2',
+					backgroundColor: 'rgba(25, 118, 210, 0.1)',
+					borderWidth: 3,
+					tension: 0
+				}
+			]
+		},
+		options: {
+			responsive: true,
+			maintainAspectRatio: true,
+			scales: {
+				y: { beginAtZero: true, max: 100 }
+			},
+			plugins: {
+				legend: { position: 'top' }
+			}
 		}
+	});
+
+	// ============================================================================
+	// ACTUALIZAR DISPLAYS
+	// ============================================================================
+	function updateDisplays() {
+		if (hv) hv.textContent = `${hIn.value}%`;
+		if (tv) tv.textContent = `${tIn.value}°C`;
+		if (rv) rv.textContent = `${rIn.value}%`;
+		if (whv && whIn) whv.textContent = (Number(whIn.value) / 100).toFixed(2);
+		if (wtv && wtIn) wtv.textContent = (Number(wtIn.value) / 100).toFixed(2);
+		if (wrv && wrIn) wrv.textContent = (Number(wrIn.value) / 100).toFixed(2);
 	}
 
-	function forward(x){
-		const z1 = W1.map((w,i)=> w[0]*x[0] + w[1]*x[1] + w[2]*x[2] + b1[i]);
+	[hIn, tIn, rIn, whIn, wtIn, wrIn].forEach(el => {
+		if (el) el.addEventListener("input", updateDisplays);
+	});
+
+	updateDisplays();
+
+	// ============================================================================
+	// RED HACIA ADELANTE
+	// ============================================================================
+	/** @param {number[]} x */
+	function forward(x) {
+		const z1 = W1.map((w, i) => w[0] * x[0] + w[1] * x[1] + w[2] * x[2] + b1[i]);
 		const h = z1.map(relu);
-		const z2 = h.reduce((s,hi,i)=> s + hi*W2[i], b2);
+		const z2 = h.reduce((s, hi, i) => s + hi * W2[i], b2);
 		const y = sigmoid(z2);
-		return {x,h,y};
+		return { h, y };
 	}
 
-	function trainEpoch(data){
+	// ============================================================================
+	// CREAR DATASET SINTÉTICO
+	// ============================================================================
+	/** @param {number} [n=400] */
+	function makeDataset(n = 400) {
+		const wh = whIn && whIn.value != null ? Number(whIn.value) / 100 : 0.6;
+		const wt = wtIn && wtIn.value != null ? Number(wtIn.value) / 100 : 0.5;
+		const wr = wrIn && wrIn.value != null ? Number(wrIn.value) / 100 : 0.4;
+		
+		const data = [];
+		for (let i = 0; i < n; i++) {
+			const h = Math.random();
+			const t = Math.random();
+			const r = Math.random();
+			const score = (1 - h) * wh + t * wt + (1 - r) * wr;
+			const y = score > 0.6 ? 1 : 0;
+			data.push({ x: [h, t, r], t: y });
+		}
+		return data;
+	}
+
+	// ============================================================================
+	// ENTRENAMIENTO
+	// ============================================================================
+	/** @param {{x:number[];t:number}[]} data */
+	function trainEpoch(data) {
 		let mse = 0;
-		for(const {x,t} of data){
-			const {h,y} = forward(x);
+		for (const { x, t } of data) {
+			const { h, y } = forward(x);
 			const e = y - t;
-			mse += e*e;
+			mse += e * e;
 			const dz2 = e * dsigmoid(y);
-			for(let i=0;i<6;i++) W2[i] -= lr * dz2 * h[i];
+			for (let i = 0; i < 6; i++) {
+				W2[i] -= lr * dz2 * h[i];
+			}
 			b2 -= lr * dz2;
-			for(let i=0;i<6;i++){
+			for (let i = 0; i < 6; i++) {
 				const dh = dz2 * W2[i];
 				const dz1 = h[i] > 0 ? dh : 0;
 				W1[i][0] -= lr * dz1 * x[0];
 				W1[i][1] -= lr * dz1 * x[1];
 				W1[i][2] -= lr * dz1 * x[2];
-				b1[i]      -= lr * dz1;
+				b1[i] -= lr * dz1;
 			}
 		}
 		return mse / data.length;
 	}
 
-	function makeDataset(n=500){
-		const wh = Number(document.getElementById('w_h').value)/100;
-		const wt = Number(document.getElementById('w_t').value)/100;
-		const wr = Number(document.getElementById('w_r').value)/100;
-		const data = [];
-		for(let i=0;i<n;i++){
-			const h = Math.random();
-			const t = Math.random();
-			const r = Math.random();
-			const score = (1-h)*wh + t*wt + (1-r)*wr;
-			const y = score > 0.6 ? 1 : 0;
-			data.push({ x: [h,t,r], t: y });
+	// ============================================================================
+	// AGREGAR AL HISTÓRICO
+	// ============================================================================
+	/** @param {number} h @param {number} t @param {number} r @param {number} yhat @param {number} decision */
+	function addToHistory(h, t, r, yhat, decision) {
+		history.push({ h, t, r, yhat, decision });
+		if (history.length > MAX_HISTORY) history.shift();
+		chart.data.labels = history.map((_, i) => `#${i + 1}`);
+		chart.data.datasets[0].data = history.map(d => d.h);
+		chart.data.datasets[1].data = history.map(d => d.t);
+		chart.data.datasets[2].data = history.map(d => d.decision * 100);
+		chart.update();
+		if (historyBody) {
+			historyBody.innerHTML = history.map((d, i) => `
+				<tr>
+					<td>${i + 1}</td>
+					<td>${d.h.toFixed(1)}%</td>
+					<td>${d.t.toFixed(1)}°C</td>
+					<td>${d.r.toFixed(1)}%</td>
+					<td>${d.yhat.toFixed(3)}</td>
+					<td><span class="badge ${d.decision > 0.5 ? 'badge-regar' : 'badge-no-regar'}">${d.decision > 0.5 ? '💧 Regar' : '🌤️ No regar'}</span></td>
+				</tr>
+			`).reverse().join('');
 		}
-		return data;
 	}
 
-	const hIn = document.getElementById('x_h');
-	const tIn = document.getElementById('x_t');
-	const rIn = document.getElementById('x_r');
-	const hv = document.getElementById('x_h_v');
-	const tv = document.getElementById('x_t_v');
-	const rv = document.getElementById('x_r_v');
-	const lossEl = document.getElementById('loss');
-	const yhatEl = document.getElementById('yhat');
-	const decisionEl = document.getElementById('decision');
-	const rtBtn = document.getElementById('rtToggle');
-
-	[hIn,tIn,rIn].forEach(el=> el.addEventListener('input', ()=>{
-		hv.textContent = hIn.value+'%';
-		tv.textContent = tIn.value+'°C';
-		rv.textContent = rIn.value+'%';
-	}));
-
-	document.getElementById('fileJson').addEventListener('change', async (ev)=>{
-		const file = ev.target.files && ev.target.files[0];
-		if(!file) return;
-		const text = await file.text();
-		try{ const m = JSON.parse(text); setWeights(m); lossEl.textContent = 'modelo cargado'; }catch(e){ lossEl.textContent = 'JSON inválido'; }
-	});
-
-	(async function tryLoadDefault(){
-		try{ const res = await fetch('nn_model.json'); if(res.ok){ const m = await res.json(); setWeights(m); } }catch(e){}
-	})();
-
-	document.getElementById('train').addEventListener('click', ()=>{
-		const data = makeDataset(600);
-		let last = 0;
-		for(let e=0;e<300;e++) last = trainEpoch(data);
-		lossEl.textContent = last.toFixed(4);
-	});
-
-	document.getElementById('predict').addEventListener('click', ()=>{
-		const x = [Number(hIn.value)/100, Number(tIn.value)/45, Number(rIn.value)/100];
-		const {y} = forward(x);
-		yhatEl.textContent = y.toFixed(3);
-		decisionEl.textContent = y > 0.5 ? 'Regar (Activado)' : 'No regar (Descanso)';
-		decisionEl.style.color = y > 0.5 ? '#2e7d32' : '#111';
-	});
-
-	function applySample(s){
-		hIn.value = s.h; tIn.value = s.t; rIn.value = s.r;
-		hv.textContent = s.h+'%'; tv.textContent = s.t+'°C'; rv.textContent = s.r+'%';
-		const x = [s.h/100, s.t/45, s.r/100];
-		const {y} = forward(x);
-		yhatEl.textContent = y.toFixed(3);
-		decisionEl.textContent = y > 0.5 ? 'Regar (Activado)' : 'No regar (Descanso)';
-		decisionEl.style.color = y > 0.5 ? '#2e7d32' : '#111';
+	// ============================================================================
+	// PREDICCIÓN
+	// ============================================================================
+	function predict() {
+		const h = hIn ? Number(hIn.value) : 35;
+		const t = tIn ? Number(tIn.value) : 28;
+		const r = rIn ? Number(rIn.value) : 20;
+		const x = [h / 100, t / 45, r / 100];
+		const { y } = forward(x);
+		if (yhatEl) yhatEl.textContent = y.toFixed(3);
+		const shouldIrrigate = y > 0.5;
+		if (decisionEl && decisionBox) {
+			decisionEl.textContent = shouldIrrigate ? "💧 REGAR ACTIVADO" : "🌤️ NO REGAR (Descanso)";
+			decisionBox.className = shouldIrrigate ? "decision-box decision-regar" : "decision-box decision-no-regar";
+			decisionBox.style.display = "block";
+		}
+		addToHistory(h, t, r, y, shouldIrrigate ? 1 : 0);
 	}
 
-	rtBtn.addEventListener('click', ()=>{
-		if(rtTimer){
-			clearInterval(rtTimer); rtTimer = null; rtBtn.textContent = 'Tiempo real: OFF';
-			return;
-		}
-		// aplica de inmediato y cada 5 minutos (300000 ms)
-		applySample(samples[sampleIdx % samples.length]); sampleIdx++;
-		rtTimer = setInterval(()=>{
-			applySample(samples[sampleIdx % samples.length]); sampleIdx++;
-		}, 300000);
-		rtBtn.textContent = 'Tiempo real: ON';
-	});
+	// ============================================================================
+	// EVENTOS DE BOTONES
+	// ============================================================================
+	const trainBtn = document.getElementById("train");
+	if (trainBtn) {
+		trainBtn.addEventListener("click", () => {
+			if (lossEl) lossEl.textContent = "Entrenando...";
+			const data = makeDataset(400);
+			let lastLoss = 0;
+			for (let e = 0; e < 300; e++) {
+				lastLoss = trainEpoch(data);
+			}
+			totalEpochs += 300;
+			if (lossEl) lossEl.textContent = lastLoss.toFixed(4);
+			if (epochsEl) epochsEl.textContent = totalEpochs;
+			alert(`✅ Entrenamiento completado!\n\n` +
+				`La red ha aprendido con los pesos configurados:\n` +
+				`• Humedad: ${whIn ? (whIn.value / 100).toFixed(2) : '0.60'}\n` +
+				`• Temperatura: ${wtIn ? (wtIn.value / 100).toFixed(2) : '0.50'}\n` +
+				`• Lluvia: ${wrIn ? (wrIn.value / 100).toFixed(2) : '0.40'}\n\n` +
+				`Épocas totales: ${totalEpochs}\n` +
+				`Error final: ${lastLoss.toFixed(4)}`);
+		});
+	}
+
+	const predictBtn = document.getElementById("predict");
+	if (predictBtn) {
+		predictBtn.addEventListener("click", predict);
+	}
+
+	// ============================================================================
+	// SIMULACIÓN EN TIEMPO REAL
+	// ============================================================================
+	const samples = [
+		{ h: 42, t: 26, r: 10 },
+		{ h: 38, t: 30, r: 15 },
+		{ h: 55, t: 22, r: 80 },
+		{ h: 28, t: 33, r: 5 },
+		{ h: 47, t: 27, r: 40 },
+		{ h: 35, t: 29, r: 20 },
+		{ h: 25, t: 35, r: 0 },
+		{ h: 65, t: 18, r: 90 }
+	];
+
+	let rtTimer = null;
+	let sampleIdx = 0;
+
+	if (rtBtn) {
+		rtBtn.addEventListener("click", () => {
+			if (rtTimer) {
+				clearInterval(rtTimer);
+				rtTimer = null;
+				rtBtn.textContent = "⏯️ Simulación: OFF";
+				rtBtn.className = "btn-realtime";
+				return;
+			}
+			rtBtn.textContent = "⏸️ Simulación: ON";
+			rtBtn.style.background = "#4caf50";
+			applySample(samples[sampleIdx % samples.length]);
+			rtTimer = setInterval(() => {
+				sampleIdx++;
+				applySample(samples[sampleIdx % samples.length]);
+			}, 3000);
+		});
+	}
+
+	/** @param {{h:number;t:number;r:number}} s */
+	function applySample(s) {
+		if (hIn) hIn.value = s.h;
+		if (tIn) tIn.value = s.t;
+		if (rIn) rIn.value = s.r;
+		updateDisplays();
+		predict();
+	}
+
+	// ============================================================================
+	// REINICIAR
+	// ============================================================================
+	const resetBtn = document.getElementById("reset");
+	if (resetBtn) {
+		resetBtn.addEventListener("click", () => {
+			if (confirm("¿Reiniciar todo el sistema? Se perderán los datos de entrenamiento e histórico.")) {
+				W1 = Array.from({ length: 6 }, () => [randn(), randn(), randn()]);
+				b1 = Array.from({ length: 6 }, () => randn());
+				W2 = Array.from({ length: 6 }, () => randn());
+				b2 = randn();
+				totalEpochs = 0;
+				history = [];
+				if (lossEl) lossEl.textContent = "—";
+				if (yhatEl) yhatEl.textContent = "—";
+				if (epochsEl) epochsEl.textContent = "0";
+				if (decisionBox) decisionBox.style.display = "none";
+				chart.data.labels = [];
+				chart.data.datasets[0].data = [];
+				chart.data.datasets[1].data = [];
+				chart.data.datasets[2].data = [];
+				chart.update();
+				if (historyBody) {
+					historyBody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: #999;">Sistema reiniciado. Presiona "Entrenar" para comenzar.</td></tr>';
+				}
+				if (rtTimer) {
+					clearInterval(rtTimer);
+					rtTimer = null;
+					if (rtBtn) rtBtn.textContent = "⏯️ Simulación: OFF";
+				}
+			}
+		});
+	}
+});
 </script>
----
+  

@@ -2,41 +2,113 @@
 import Page from "../layouts/Page.astro";
 const pageTitle = "Marco teórico";
 ---
+
 <Page title={pageTitle}>
-	<h1 style="margin:0 0 1rem 0;">Marco teórico</h1>
-	<h3>Ecología y uso del agua</h3>
-	<p>La agricultura utiliza ~70% del agua dulce (FAO, 2022). El exceso de riego provoca salinización, compactación, pérdida de nutrientes por lixiviación y eutrofización. La <em>evapotranspiración</em> y el balance hídrico del suelo son pilares para programar riego (CSU, 2023).</p>
-	<h3>Ingeniería de sistemas e IoT</h3>
-	<ul>
-		<li><strong>Sensores</strong>: humedad (capacitivos/resistivos), temperatura (TMP36/DHT), radiación (LDR), lluvia.</li>
-		<li><strong>Actuación</strong>: válvulas/bombas controladas por relés.</li>
-		<li><strong>Comunicaciones</strong>: WiFi/LoRa; telemetría.</li>
-	</ul>
-	<h3>Modelos predictivos</h3>
-	<p>Modelos de aprendizaje (LSTM) reducen error frente a métodos tradicionales (~31%).</p>
-	<h3>Riego inteligente</h3>
-	<p>Medir → decidir → actuar: aplicar dosis óptima por zona, verificando efecto; eficiencia 40–60%.</p>
-	<div class="card" style="margin-top:1rem;background:#f8fbf9;border:1px solid #e0e0e0;border-radius:12px;padding:1rem;">
-		<strong>Retroalimentación</strong>
-		<ul>
-			<li>Indicadores mínimos: humedad, temperatura, lluvia.</li>
-			<li>IA traduce indicadores en decisiones consistentes.</li>
-			<li>IoT permite medir y actuar en tiempo real.</li>
-		</ul>
-	</div>
-	<hr/>
-	<h3>Actividad de refuerzo</h3>
-	<p>¿Cuál sensor se usa para medir <strong>humedad del suelo</strong>?</p>
-	<select id="mcq" style="padding:0.4rem;border:1px solid #9e9e9e;border-radius:8px;">
-		<option value="">Selecciona…</option>
-		<option value="LDR">LDR</option>
-		<option value="TMP36">TMP36</option>
-		<option value="Soil">Sensor de humedad del suelo</option>
-	</select>
-	<div id="mcqOut" style="margin-top:0.5rem;"> </div>
-	<script>
-		document.getElementById('mcq').onchange = (e)=>{
-			document.getElementById('mcqOut').textContent = e.target.value === 'Soil' ? '✅ Correcto.' : 'ℹ️ Revisa los tipos de sensores.';
-		};
-	</script>
+  <section class="max-w-5xl mx-auto">
+    <h1 class="text-4xl font-bold text-emerald-900 mb-10 text-center">
+      📚 Marco Teórico
+    </h1>
+
+    <!-- Ecología y uso del agua -->
+    <div class="bg-emerald-50 border border-emerald-100 rounded-2xl p-6 mb-8 shadow-sm">
+      <h2 class="text-2xl font-semibold text-emerald-800 mb-3">
+        🌱 Ecología y uso del agua
+      </h2>
+      <p class="text-neutral-800 leading-relaxed">
+        El agua es la base de la vida y uno de los recursos más utilizados en la agricultura. 
+        De hecho, cerca del <strong>70% del agua dulce del planeta</strong> se usa para regar cultivos 
+        (FAO, 2022). Sin embargo, gran parte se desperdicia por exceso de riego o mala gestión.  
+      </p>
+      <p class="text-neutral-800 leading-relaxed mt-2">
+        Cuando se riega más de lo necesario, el agua arrastra nutrientes y químicos, contamina 
+        ríos y lagos, y puede incluso dañar el suelo. Por eso, conocer la 
+        <strong>humedad del suelo</strong> y la <strong>evapotranspiración</strong> (la pérdida de agua 
+        por calor y transpiración de las plantas) es clave para aplicar solo el agua que realmente 
+        necesitan los cultivos.
+      </p>
+    </div>
+
+    <!-- IoT e ingeniería de sistemas -->
+    <div class="bg-white border border-emerald-100 rounded-2xl p-6 mb-8 shadow-sm">
+      <h2 class="text-2xl font-semibold text-emerald-800 mb-3">
+        ⚙️ Ingeniería de sistemas e Internet de las Cosas (IoT)
+      </h2>
+      <p class="text-neutral-800 leading-relaxed">
+        La tecnología IoT (Internet de las Cosas) permite conectar sensores y dispositivos al 
+        internet para medir y controlar variables del entorno agrícola en tiempo real.  
+        Esto hace posible que el sistema de riego tome decisiones automáticas, como encender 
+        o apagar válvulas cuando el suelo está seco o cuando va a llover.
+      </p>
+
+      <ul class="mt-4 space-y-2 text-neutral-800">
+        <li>📡 <strong>Sensores:</strong> miden humedad del suelo, temperatura, luz y lluvia.</li>
+        <li>💧 <strong>Actuadores:</strong> abren o cierran válvulas de agua automáticamente.</li>
+        <li>🌐 <strong>Comunicación:</strong> los datos se envían por WiFi o LoRa para monitoreo remoto.</li>
+      </ul>
+    </div>
+
+    <!-- Modelos predictivos -->
+    <div class="bg-emerald-50 border border-emerald-100 rounded-2xl p-6 mb-8 shadow-sm">
+      <h2 class="text-2xl font-semibold text-emerald-800 mb-3">
+        🤖 Modelos predictivos e inteligencia artificial
+      </h2>
+      <p class="text-neutral-800 leading-relaxed">
+        La inteligencia artificial puede aprender del comportamiento del clima y del suelo 
+        para <strong>predecir cuánta agua necesitarán las plantas</strong> en los próximos días.  
+        Por ejemplo, los modelos de tipo <strong>LSTM</strong> (usados en predicción de series temporales) 
+        han demostrado reducir errores de cálculo en más de un <strong>30%</strong> frente a métodos tradicionales (Li et al., 2022).
+      </p>
+      <p class="text-neutral-800 leading-relaxed mt-2">
+        En palabras simples: el sistema "aprende" de los datos y riega solo cuando y donde es necesario, 
+        sin depender de horarios fijos o estimaciones humanas.
+      </p>
+    </div>
+
+    <!-- Riego inteligente -->
+    <div class="bg-white border border-emerald-100 rounded-2xl p-6 mb-10 shadow-sm">
+      <h2 class="text-2xl font-semibold text-emerald-800 mb-3">💧 Riego inteligente</h2>
+      <p class="text-neutral-800 leading-relaxed">
+        Un sistema de riego inteligente sigue un ciclo muy simple: 
+        <strong>medir → decidir → actuar</strong>.  
+        Mide las condiciones del suelo y el clima, analiza los datos con algoritmos de IA y 
+        decide cuánta agua aplicar.  
+      </p>
+      <p class="text-neutral-800 leading-relaxed mt-2">
+        Con este método, se puede ahorrar entre un <strong>40% y 60%</strong> de agua 
+        y aumentar la productividad sin afectar la salud de las plantas.
+      </p>
+    </div>
+
+
+
+    <!-- Actividad de refuerzo -->
+    <div class="bg-white border border-emerald-100 rounded-2xl p-6 shadow-sm">
+      <h3 class="text-2xl font-semibold text-emerald-800 mb-3 text-center">🧩 ¡Es momento de participar!</h3>
+      <p class="text-neutral-700 mb-3">
+        ¿Cuál de los siguientes sensores se usa para medir la <strong>humedad del suelo</strong>?
+      </p>
+
+      <select
+        id="mcq"
+        class="border border-neutral-300 rounded-lg px-3 py-2 w-full sm:w-1/2 text-neutral-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition"
+      >
+        <option value="">Selecciona una opción...</option>
+        <option value="LDR">LDR (sensor de luz)</option>
+        <option value="TMP36">TMP36 (sensor de temperatura)</option>
+        <option value="Soil">Sensor de humedad del suelo</option>
+      </select>
+
+      <div id="mcqOut" class="mt-3 text-neutral-800 font-medium"></div>
+
+      <script>
+        document.getElementById('mcq').onchange = (e) => {
+          const out = document.getElementById('mcqOut');
+          out.textContent =
+            e.target.value === 'Soil'
+              ? '✅ ¡Correcto! Ese sensor mide la humedad del suelo.'
+              : '💡 Intenta de nuevo: recuerda que el LDR mide luz y el TMP36 mide temperatura.';
+        };
+      </script>
+    </div>
+  </section>
 </Page>

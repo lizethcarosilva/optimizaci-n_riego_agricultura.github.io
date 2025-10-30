@@ -2,13 +2,47 @@
 import Page from "../layouts/Page.astro";
 const pageTitle = "Referencias";
 ---
+
 <Page title={pageTitle}>
-	<h1 style="margin:0 0 1rem 0;">Referencias bibliográficas</h1>
-	<ul>
-		<li>FAO. (2022). El estado mundial de la agricultura y la alimentación.</li>
-		<li>Bonilla, V. V., & López, D. F. (2015). Evaluación de huella hídrica en cultivo de papa R12.</li>
-		<li>Martín Arroyo, M. (2017). El riego inteligente en la agricultura. iAgua.</li>
-		<li>Colorado State University Extension. (2023). Irrigation Scheduling: Principles and Practices.</li>
-		<li>Li, S., Zhang, Y., & Wang, L. (2022). Smart Irrigation and Precision Agriculture.</li>
-	</ul>
+  <section class="max-w-3xl mx-auto py-10 px-4">
+    <h1 class="text-3xl font-bold text-emerald-800 mb-10 text-center tracking-wide">
+      📚 Referencias bibliográficas
+    </h1>
+
+    <div class="space-y-4">
+      <div class="p-5 bg-emerald-50 border border-emerald-100 rounded-2xl shadow-sm hover:shadow-md transition">
+        <p class="text-neutral-800 leading-relaxed">
+          <strong>FAO</strong>. (2022). <em>El estado mundial de la agricultura y la alimentación.</em>
+        </p>
+      </div>
+
+      <div class="p-5 bg-emerald-50 border border-emerald-100 rounded-2xl shadow-sm hover:shadow-md transition">
+        <p class="text-neutral-800 leading-relaxed">
+          <strong>Bonilla, V. V., & López, D. F.</strong> (2015). <em>Evaluación de huella hídrica en cultivo de papa R12.</em>
+        </p>
+      </div>
+
+      <div class="p-5 bg-emerald-50 border border-emerald-100 rounded-2xl shadow-sm hover:shadow-md transition">
+        <p class="text-neutral-800 leading-relaxed">
+          <strong>Martín Arroyo, M.</strong> (2017). <em>El riego inteligente en la agricultura.</em> iAgua.
+        </p>
+      </div>
+
+      <div class="p-5 bg-emerald-50 border border-emerald-100 rounded-2xl shadow-sm hover:shadow-md transition">
+        <p class="text-neutral-800 leading-relaxed">
+          <strong>Colorado State University Extension.</strong> (2023). <em>Irrigation Scheduling: Principles and Practices.</em>
+        </p>
+      </div>
+
+      <div class="p-5 bg-emerald-50 border border-emerald-100 rounded-2xl shadow-sm hover:shadow-md transition">
+        <p class="text-neutral-800 leading-relaxed">
+          <strong>Li, S., Zhang, Y., & Wang, L.</strong> (2022). <em>Smart Irrigation and Precision Agriculture.</em>
+        </p>
+      </div>
+    </div>
+
+    <div class="mt-12 text-center text-sm text-neutral-600 italic">
+      🌾 “El conocimiento florece cuando se comparte.”
+    </div>
+  </section>
 </Page>

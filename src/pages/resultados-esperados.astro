@@ -3,15 +3,68 @@ import Page from "../layouts/Page.astro";
 import NNSimulator from "../components/NNSimulator.astro";
 const pageTitle = "Resultados esperados";
 ---
+
 <Page title={pageTitle}>
-	<h1 class="text-3xl font-semibold text-emerald-900 mb-3">Resultados esperados</h1>
-	<div class="rounded-2xl border border-emerald-100 bg-emerald-50/70 p-4 mb-4">
-		<p class="text-neutral-800">Con decisión basada en datos se espera <strong>reducir 40–60% el consumo</strong> frente al riego tradicional y <strong>mantener/mejorar 15–25% la productividad</strong>. Este demo muestra cómo una NN traduce tres <em>indicadores</em> (humedad, temperatura, lluvia) en una decisión diaria de riego.</p>
-		<ul class="list-disc ml-6 mt-2 text-neutral-800">
-			<li><strong>Importancias</strong>: ajusta cuánto pesa cada indicador al entrenar (simula cultivo/suelo/zona).</li>
-			<li><strong>Entrenar</strong>: la NN aprende un patrón con tus importancias (observa la pérdida MSE).</li>
-			<li><strong>Predecir</strong>: con indicadores actuales, la salida 0..1 define <em>Regar / No regar</em>.</li>
-		</ul>
-	</div>
-	<NNSimulator />
+  <h1 class="text-3xl font-semibold text-emerald-900 mb-[50px] text-center">🏁 Resultados Esperados</h1>
+
+  <p class="text-neutral-800 leading-relaxed mb-4">
+    Aunque el sistema inteligente de riego aún no se ha construido, el proyecto plantea en el futuro 
+    el desarrollo de una <strong>red neuronal artificial</strong> que ayude al sistema a <strong>aprender de los datos</strong> 
+    y a decidir cuándo es el mejor momento para regar un cultivo.
+  </p>
+
+  <div class="rounded-2xl border border-emerald-100 bg-emerald-50/70 p-4 mb-6">
+    <h2 class="text-2xl font-semibold text-emerald-800 mb-2">🧠 Cómo se planea diseñar la red neuronal</h2>
+    <p class="text-neutral-800 mb-3">
+      En la etapa de simulación y análisis de datos, se propone crear un modelo de inteligencia artificial 
+      que funcione de manera similar a cómo un agricultor experimentado toma decisiones: observando 
+      <em>humedad, temperatura y lluvia</em>, y aprendiendo con el tiempo cuál es el punto ideal para regar.
+    </p>
+
+    <ul class="list-disc ml-6 text-neutral-800 space-y-2">
+      <li>
+        La red recibirá tres tipos de datos principales:
+        <strong>humedad del suelo</strong>, <strong>temperatura ambiente</strong> y <strong>probabilidad de lluvia</strong>.
+      </li>
+      <li>
+        A partir de estos valores, el modelo “aprende” mediante ejemplos previos (datos históricos o simulados) 
+        cuándo se regó correctamente y cuándo no era necesario.
+      </li>
+      <li>
+        Con ese aprendizaje, la red podrá predecir si es mejor <strong>regar (1)</strong> o <strong>no regar (0)</strong> 
+        en un momento determinado.
+      </li>
+      <li>
+        Se planea utilizar una estructura sencilla tipo <strong>3 → 6 → 1</strong>: tres entradas (las variables de clima y suelo), 
+        seis neuronas internas que procesan la información y una salida final que toma la decisión.
+      </li>
+      <li>
+        El entrenamiento del modelo se realizará con herramientas como <strong>Python y TensorFlow</strong>, 
+        para luego integrarlo al sistema de riego con el microcontrolador ESP32.
+      </li>
+    </ul>
+
+    <p class="text-neutral-800 mt-3">
+      Este simulador es una representación visual de esa idea. Permite probar cómo una red neuronal simple 
+      puede ajustar su “criterio” según la importancia que demos a cada sensor.
+    </p>
+  </div>
+
+  <NNSimulator />
+
+  <div class="rounded-2xl border border-emerald-100 bg-emerald-50/60 p-4 mt-6">
+    <h2 class="text-2xl font-semibold text-emerald-800 mb-2">🌾 Resultados esperados del anteproyecto</h2>
+    <ul class="list-disc ml-6 text-neutral-800 space-y-2">
+      <li><strong>Optimización del uso del agua:</strong> reducción del consumo entre un 40% y 60% gracias al control automatizado.</li>
+      <li><strong>Aumento de la productividad:</strong> mejoras del 15%–25% en rendimiento agrícola por riego oportuno.</li>
+      <li><strong>Reducción de costos:</strong> ahorro anual superior al 40% en agua y energía.</li>
+      <li><strong>Desarrollo tecnológico local:</strong> fortalecimiento de competencias en IoT, IA y automatización.</li>
+      <li><strong>Impacto ambiental positivo:</strong> menor contaminación por fertilizantes y preservación de acuíferos.</li>
+      <li><strong>Escalabilidad:</strong> adaptable a diferentes cultivos y condiciones climáticas.</li>
+    </ul>
+    <p class="text-neutral-800 mt-3">
+      Estos resultados muestran que el proyecto no solo busca innovar en tecnología, sino también promover una 
+      agricultura más eficiente, sostenible y consciente con el medio ambiente.
+    </p>
+  </div>
 </Page>

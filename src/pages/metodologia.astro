@@ -2,45 +2,103 @@
 import Page from "../layouts/Page.astro";
 const pageTitle = "Metodología";
 ---
+
 <Page title={pageTitle}>
-	<h1 style="margin:0 0 1rem 0;">Metodología</h1>
-	<h3>Enfoque</h3>
-	<p>Diseño e implementación iterativa de un sistema de riego inteligente con simulación previa, prototipado electrónico y análisis comparativo.</p>
-	<h3>Etapas</h3>
-	<ol>
-		<li><strong>Diseño conceptual</strong></li>
-		<li><strong>Simulación</strong></li>
-		<li><strong>Modelo predictivo</strong></li>
-		<li><strong>Piloto</strong></li>
-		<li><strong>Evaluación</strong></li>
-	</ol>
-	<h3>Métodos y herramientas</h3>
-	<ul>
-		<li>Hardware: sensores, relés, válvulas.</li>
-		<li>Software: microcontrolador (C/C++), análisis Python, web (Astro).</li>
-		<li>Datos: clima y registros de suelo/riego.</li>
-	</ul>
-	<div class="card" style="margin-top:1rem;background:#f8fbf9;border:1px solid #e0e0e0;border-radius:12px;padding:1rem;">
-		<strong>Retroalimentación</strong>
-		<ul>
-			<li>Primero simular; luego prototipar; medir y ajustar.</li>
-			<li>Separar datos de entrenamiento vs. validación.</li>
-			<li>Definir métricas: agua ahorrada, rendimiento, costo.</li>
-		</ul>
-	</div>
-	<hr/>
-	<h3>Actividad de refuerzo</h3>
-	<p>¿Cuál es la <strong>primera</strong> etapa?</p>
-	<select id="mtd" style="padding:0.4rem;border:1px solid #9e9e9e;border-radius:8px;">
-		<option value="">Selecciona…</option>
-		<option>Simulación</option>
-		<option>Diseño conceptual</option>
-		<option>Piloto</option>
-	</select>
-	<div id="mtdOut" style="margin-top:0.5rem;"> </div>
-	<script>
-		document.getElementById('mtd').onchange = (e)=>{
-			document.getElementById('mtdOut').textContent = e.target.value === 'Diseño conceptual' ? '✅ Correcto.' : 'ℹ️ Observa el orden propuesto.';
-		};
-	</script>
+  <section class="max-w-5xl mx-auto">
+    <h1 class="text-4xl font-bold text-emerald-900 mb-10 text-center">
+      ⚙️ Metodología
+    </h1>
+
+    <div class="bg-emerald-50 border border-emerald-100 rounded-2xl p-6 mb-8 shadow-sm">
+      <h2 class="text-2xl font-semibold text-emerald-800 mb-3">🔍 Enfoque general</h2>
+      <p class="text-neutral-800 leading-relaxed">
+        Este anteproyecto propone el desarrollo futuro de un <strong>sistema inteligente de riego automatizado</strong> 
+        que combine sensores, algoritmos predictivos e Internet de las Cosas (IoT).  
+        Su enfoque será <strong>experimental y tecnológico</strong>, avanzando paso a paso desde el diseño teórico 
+        hasta la validación práctica.
+      </p>
+      <p class="text-neutral-800 mt-2">
+        El proyecto aún no ha sido implementado; se encuentra en fase de diseño y planificación, 
+        con la intención de construir un prototipo funcional una vez se apruebe su desarrollo.
+      </p>
+    </div>
+
+    <!-- Etapas -->
+    <div class="bg-white border border-emerald-100 rounded-2xl p-6 mb-8 shadow-sm">
+      <h2 class="text-2xl font-semibold text-emerald-800 mb-3">🧩 Etapas del proyecto</h2>
+      <ol class="list-decimal ml-6 text-neutral-800 space-y-2">
+        <li>
+          <strong>Diseño conceptual:</strong> Definición del modelo teórico del sistema, componentes 
+          electrónicos (ESP32, sensores de humedad, temperatura, luz y válvulas eléctricas) y arquitectura general.
+        </li>
+        <li>
+          <strong>Simulación y pruebas virtuales:</strong> Uso de plataformas como 
+          <strong>Tinkercad</strong> para validar el funcionamiento de sensores y flujo de datos antes 
+          del montaje físico.
+        </li>
+        <li>
+          <strong>Desarrollo del algoritmo predictivo:</strong> Diseño de un modelo de red neuronal 
+          (LSTM) capaz de predecir la necesidad de riego a partir de variables climáticas y del suelo.
+        </li>
+        <li>
+          <strong>Implementación piloto:</strong> Construcción de un prototipo en una parcela de prueba 
+          para comparar su desempeño frente a un sistema de riego tradicional.
+        </li>
+        <li>
+          <strong>Análisis y evaluación de resultados:</strong> Medición del ahorro de agua, costos 
+          y eficiencia del sistema, proyectando su aplicación a mayor escala.
+        </li>
+      </ol>
+    </div>
+
+    <!-- Espacio para imagen del prototipo -->
+    <div class="bg-emerald-50 border border-emerald-100 rounded-2xl p-6 mb-8 shadow-sm text-center">
+      <h2 class="text-2xl font-semibold text-emerald-800 mb-3">🧠 Prototipo simulado (Tinkercad)</h2>
+
+      <div class="bg-white border border-dashed border-emerald-300 rounded-2xl h-64 flex items-center justify-center text-emerald-500 italic">
+        📸 Espacio reservado para imagen del prototipo de Tinkercad
+      </div>
+    </div>
+
+    <!-- Métodos y herramientas -->
+    <div class="bg-white border border-emerald-100 rounded-2xl p-6 mb-8 shadow-sm">
+      <h2 class="text-2xl font-semibold text-emerald-800 mb-3">🧰 Métodos y herramientas</h2>
+      <ul class="list-disc ml-6 text-neutral-800 space-y-2">
+        <li><strong>Hardware:</strong> sensores de humedad, temperatura, relés, válvulas eléctricas.</li>
+        <li><strong>Software:</strong> programación en C/C++ (ESP32) - Sensor, análisis de datos con Python, y desarrollo web con Astro.</li>
+        <li><strong>Datos:</strong> registros climáticos, humedad del suelo y consumo de agua para calibración.</li>
+      </ul>
+    </div>
+
+
+    <!-- Actividad interactiva -->
+    <div class="bg-white border border-emerald-100 rounded-2xl p-6 shadow-sm">
+      <h3 class="text-2xl font-semibold text-emerald-800 mb-3 text-center">🎯 ¡Es momento de participar!</h3>
+      <p class="text-neutral-700 mb-3">
+        ¿Cuál es la <strong>primera etapa</strong> en la metodología del anteproyecto?
+      </p>
+
+      <select
+        id="mtd"
+        class="border border-neutral-300 rounded-lg px-3 py-2 w-full sm:w-1/2 text-neutral-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition"
+      >
+        <option value="">Selecciona una opción...</option>
+        <option value="Simulación">Simulación</option>
+        <option value="Diseño conceptual">Diseño conceptual</option>
+        <option value="Piloto">Implementación piloto</option>
+      </select>
+
+      <div id="mtdOut" class="mt-3 text-neutral-800 font-medium"></div>
+
+      <script>
+        document.getElementById('mtd').onchange = (e) => {
+          const out = document.getElementById('mtdOut');
+          out.textContent =
+            e.target.value === 'Diseño conceptual'
+              ? '✅ Correcto. Primero se diseña la idea antes de simularla.'
+              : '💡 Revisa el orden: todo inicia con el diseño conceptual.';
+        };
+      </script>
+    </div>
+  </section>
 </Page>

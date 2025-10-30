@@ -8,10 +8,14 @@ const to = (path = '/') => {
 };
 ---
 <Page title="Optimización de riego agrícola con IA e IoT">
-    <h1 class="text-3xl font-semibold text-emerald-900 mb-2">OPTIMIZACIÓN DE RIEGO EN AGRICULTURA</h1>
-    <p class="mb-4 text-neutral-700">Sistema inteligente que combina sensores y algoritmos para reducir consumo de agua manteniendo la productividad. Universidad del Tolima · Ingeniería de Sistemas.</p>
+    <h1 class="text-3xl font-semibold text-emerald-900 mb-[50px] text-center">OPTIMIZACIÓN DE RIEGO EN AGRICULTURA</h1>
+    <p class=" text-neutral-700 text-2xl mb-[50px]">Sistema inteligente que combina sensores y algoritmos para reducir consumo de agua manteniendo la productividad. </p>
+   
+    <p class=" text-neutral-700 font-bold text-2xl mb-[50px] text-center bg-linear-to-r from-amber-200 to-teal-600 rounded-2xl p-4 shadow-sm border border-emerald-100 ">Cada gota cuenta. ¿Qué pasaría si pudiéramos usar la inteligencia artificial para cuidar el agua y hacer la agricultura más sostenible? </p>
+
+
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
-        <div class="bg-white border border-emerald-100 rounded-2xl p-4 shadow-sm">
+        <div class="bg-white border border-amber-600 rounded-2xl p-4 shadow-sm">
             <strong class="block text-emerald-900 mb-1">Estudiantes</strong>
             <ul class="list-disc ml-6 text-neutral-700">
 				<li>Lizeth Andrea Caro Silva</li>
@@ -19,19 +23,11 @@ const to = (path = '/') => {
 				<li>Juan Camilo Giraldo Perdomo</li>
 			</ul>
 		</div>
-        <div class="bg-white border border-emerald-100 rounded-2xl p-4 shadow-sm">
+        <div class="bg-white border border-emerald-600 rounded-2xl p-4 shadow-sm">
             <strong class="block text-emerald-900 mb-1">Docente</strong>
             <div class="text-neutral-700">Adriana Paola Albarracín Calderón</div>
 		</div>
 	</div>
-    <div class="flex flex-wrap gap-2">
-        <a href={to('justificacion')} class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow hover:-translate-y-0.5 transition">
-            <span>📘</span>
-            <span>Ir a Justificación</span>
-        </a>
-        <a href={to('resultados-esperados')} class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-emerald-200 text-emerald-900 shadow-sm hover:bg-emerald-50 transition">
-            <span>🧠</span>
-            <span>Simulación (NN)</span>
-        </a>
-	</div>
+
+
 </Page>

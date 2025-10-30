@@ -3,22 +3,40 @@ import Page from "../layouts/Page.astro";
 const pageTitle = "Justificación";
 ---
 <Page title={pageTitle}>
-	<h1 class="text-3xl font-semibold text-emerald-900 mb-3">Justificación</h1>
-	<p class="text-neutral-800 mb-2">El agua es un recurso crítico y la agricultura consume alrededor del 70% del agua dulce disponible (FAO, 2022). En Colombia se han documentado excesos de aplicación en cultivos como la papa, donde se suministra casi el doble de lo requerido (Bonilla & López, 2015). Este uso ineficiente implica agotamiento de acuíferos, contaminación por escorrentía de fertilizantes y mayores costos para los productores.</p>
-	<p class="text-neutral-800 mb-2">Desde la ecología, optimizar el riego disminuye presión sobre ecosistemas, mejora la calidad del agua y reduce emisiones asociadas a bombeo. Desde la ingeniería, sensores IoT y algoritmos predictivos permiten medir humedad, temperatura y lluvia para decidir la dosis justa, reduciendo 40–60% el consumo y manteniendo o mejorando la productividad (15–25%).</p>
-	<p class="text-neutral-800">La región del Tolima enfrenta variabilidad climática y necesidades de tecnificación. Este proyecto propone un sistema accesible (ESP32/Arduino + sensores de bajo costo) y replicable para pequeños y medianos productores, aportando sostenibilidad hídrica, eficiencia económica y formación tecnológica.</p>
-	<div class="mt-4 rounded-2xl border border-emerald-100 bg-emerald-50/70 p-4">
-		<strong class="text-emerald-900">Retroalimentación</strong>
-		<ul class="list-disc ml-6 text-neutral-800 mt-1">
-			<li><strong>Problema</strong>: exceso de agua → impacto en acuíferos y costos.</li>
-			<li><strong>Solución</strong>: medición + predicción → regar sólo cuando hace falta.</li>
-			<li><strong>Beneficio</strong>: 40–60% menos agua; 15–25% más productividad.</li>
-		</ul>
-	</div>
+	<h1 class="text-3xl font-semibold text-emerald-900 mb-[50px] text-center">Justificación</h1>
+	<p class="text-neutral-800 mb-[25px] text-justify">El agua es un recurso crítico y la agricultura consume alrededor del 70% del agua dulce disponible (FAO, 2022). En Colombia se han documentado excesos de aplicación en cultivos como la papa, donde se suministra casi el doble de lo requerido (Bonilla & López, 2015). Este uso ineficiente implica agotamiento de acuíferos, contaminación por escorrentía de fertilizantes y mayores costos para los productores.</p>
+	<p class="text-neutral-800 mb-[25px] text-justify">Desde la ecología, optimizar el riego disminuye presión sobre ecosistemas, mejora la calidad del agua y reduce emisiones asociadas a bombeo. Desde la ingeniería, sensores IoT y algoritmos predictivos permiten medir humedad, temperatura y lluvia para decidir la dosis justa, reduciendo 40–60% el consumo y manteniendo o mejorando la productividad (15–25%).</p>
+	<p class="text-neutral-800 mb-[25px] text-justify">La región del Tolima enfrenta variabilidad climática y necesidades de tecnificación. Este proyecto propone un sistema accesible (ESP32/Arduino + sensores de bajo costo) y replicable para pequeños y medianos productores, aportando sostenibilidad hídrica, eficiencia económica y formación tecnológica.</p>
+    <div class="grid grid-cols-1 sm:grid-cols-4 gap-3 mb-[50px]">
+        <div class="bg-emerald-200/50 border border-emerald-100 rounded-2xl p-4 shadow-sm">
+          <div class="card-title text-center">🎯 Predicción Precisa</div>
+          <div class="card-value text-center">95%</div>
+          <div class="card-unit">Precisión en predicciones de ET</div>
+        </div>
+        
+        <div class="bg-blue-200/50 border border-emerald-100 rounded-2xl p-4 shadow-sm">
+          <div class="card-title text-center">💧 Ahorro de Agua</div>
+          <div class="card-value text-center">40-60%</div>
+          <div class="card-unit">Reducción en consumo hídrico</div>
+        </div>
+        
+        <div class="bg-amber-200/50 border border-emerald-100 rounded-2xl p-4 shadow-sm">
+          <div class="card-title text-center">📈 Productividad</div>
+          <div class="card-value text-center">+15-25%</div>
+          <div class="card-unit">Incremento en rendimiento</div>
+        </div>
+        
+        <div class="bg-indigo-200/50 border border-emerald-100 rounded-2xl p-4 shadow-sm">
+          <div class="card-title text-center">⚡ Respuesta</div>
+          <div class="card-value text-center">&lt;1s</div>
+          <div class="card-unit">Tiempo de procesamiento</div>
+        </div>
+      </div>
+    
 	<hr class="my-4"/>
-	<h3 class="text-xl font-semibold text-emerald-900 mb-2">Actividad de refuerzo</h3>
-	<p class="text-neutral-800">Verdadero o falso: “El riego inteligente puede reducir hasta un 60% el consumo de agua”.</p>
-	<div class="flex gap-2 mt-2">
+	<h3 class="text-[30px] font-semibold text-emerald-900 mb-2 text-center">¡Es momento de participar!</h3>
+	<p class="text-neutral-800 mb-[25px] text-center">Verdadero o falso: “El riego inteligente puede reducir hasta un 60% el consumo de agua”.</p>
+	<div class="flex gap-2 mt-2 justify-center">
 		<button id="vf-true" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow hover:-translate-y-0.5 transition">
 			<span>✅</span><span>Verdadero</span>
 		</button>
@@ -26,7 +44,7 @@ const pageTitle = "Justificación";
 			<span>❌</span><span>Falso</span>
 		</button>
 	</div>
-	<div id="vf-out" class="mt-2 text-neutral-800"> </div>
+	<div id="vf-out" class="mt-2 text-neutral-800 text-center"> </div>
 	<script>
 		document.getElementById('vf-true').onclick = ()=>{ document.getElementById('vf-out').textContent = '✅ Correcto. Diversos casos reportan 40–60% de ahorro.' };
 		document.getElementById('vf-false').onclick = ()=>{ document.getElementById('vf-out').textContent = '❌ Revisa la justificación: el rango típico es 40–60%.' };
