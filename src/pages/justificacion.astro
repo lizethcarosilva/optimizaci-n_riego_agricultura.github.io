@@ -3,26 +3,30 @@ import Page from "../layouts/Page.astro";
 const pageTitle = "Justificación";
 ---
 <Page title={pageTitle}>
-	<h1 style="margin:0 0 1rem 0;">Justificación</h1>
-	<p>El agua es un recurso crítico y la agricultura consume alrededor del 70% del agua dulce disponible (FAO, 2022). En Colombia se han documentado excesos de aplicación en cultivos como la papa, donde se suministra casi el doble de lo requerido (Bonilla & López, 2015). Este uso ineficiente implica agotamiento de acuíferos, contaminación por escorrentía de fertilizantes y mayores costos para los productores.</p>
-	<p>Desde la ecología, optimizar el riego disminuye presión sobre ecosistemas, mejora la calidad del agua y reduce emisiones asociadas a bombeo. Desde la ingeniería, sensores IoT y algoritmos predictivos permiten medir humedad, temperatura y lluvia para decidir la dosis justa, reduciendo 40–60% el consumo y manteniendo o mejorando la productividad (15–25%).</p>
-	<p>La región del Tolima enfrenta variabilidad climática y necesidades de tecnificación. Este proyecto propone un sistema accesible (ESP32/Arduino + sensores de bajo costo) y replicable para pequeños y medianos productores, aportando sostenibilidad hídrica, eficiencia económica y formación tecnológica.</p>
-	<div class="card" style="margin-top:1rem;background:#f8fbf9;border:1px solid #e0e0e0;border-radius:12px;padding:1rem;">
-		<strong>Retroalimentación</strong>
-		<ul>
+	<h1 class="text-3xl font-semibold text-emerald-900 mb-3">Justificación</h1>
+	<p class="text-neutral-800 mb-2">El agua es un recurso crítico y la agricultura consume alrededor del 70% del agua dulce disponible (FAO, 2022). En Colombia se han documentado excesos de aplicación en cultivos como la papa, donde se suministra casi el doble de lo requerido (Bonilla & López, 2015). Este uso ineficiente implica agotamiento de acuíferos, contaminación por escorrentía de fertilizantes y mayores costos para los productores.</p>
+	<p class="text-neutral-800 mb-2">Desde la ecología, optimizar el riego disminuye presión sobre ecosistemas, mejora la calidad del agua y reduce emisiones asociadas a bombeo. Desde la ingeniería, sensores IoT y algoritmos predictivos permiten medir humedad, temperatura y lluvia para decidir la dosis justa, reduciendo 40–60% el consumo y manteniendo o mejorando la productividad (15–25%).</p>
+	<p class="text-neutral-800">La región del Tolima enfrenta variabilidad climática y necesidades de tecnificación. Este proyecto propone un sistema accesible (ESP32/Arduino + sensores de bajo costo) y replicable para pequeños y medianos productores, aportando sostenibilidad hídrica, eficiencia económica y formación tecnológica.</p>
+	<div class="mt-4 rounded-2xl border border-emerald-100 bg-emerald-50/70 p-4">
+		<strong class="text-emerald-900">Retroalimentación</strong>
+		<ul class="list-disc ml-6 text-neutral-800 mt-1">
 			<li><strong>Problema</strong>: exceso de agua → impacto en acuíferos y costos.</li>
 			<li><strong>Solución</strong>: medición + predicción → regar sólo cuando hace falta.</li>
 			<li><strong>Beneficio</strong>: 40–60% menos agua; 15–25% más productividad.</li>
 		</ul>
 	</div>
-	<hr/>
-	<h3>Actividad de refuerzo</h3>
-	<p>Verdadero o falso: “El riego inteligente puede reducir hasta un 60% el consumo de agua”.</p>
-	<div style="display:flex;gap:0.5rem;">
-		<button id="vf-true" style="padding:0.4rem 0.8rem;border:1px solid #9e9e9e;border-radius:8px;background:#fff;cursor:pointer;">Verdadero</button>
-		<button id="vf-false" style="padding:0.4rem 0.8rem;border:1px solid #9e9e9e;border-radius:8px;background:#fff;cursor:pointer;">Falso</button>
+	<hr class="my-4"/>
+	<h3 class="text-xl font-semibold text-emerald-900 mb-2">Actividad de refuerzo</h3>
+	<p class="text-neutral-800">Verdadero o falso: “El riego inteligente puede reducir hasta un 60% el consumo de agua”.</p>
+	<div class="flex gap-2 mt-2">
+		<button id="vf-true" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow hover:-translate-y-0.5 transition">
+			<span>✅</span><span>Verdadero</span>
+		</button>
+		<button id="vf-false" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-emerald-200 text-emerald-900 shadow-sm hover:bg-emerald-50 transition">
+			<span>❌</span><span>Falso</span>
+		</button>
 	</div>
-	<div id="vf-out" style="margin-top:0.5rem;"> </div>
+	<div id="vf-out" class="mt-2 text-neutral-800"> </div>
 	<script>
 		document.getElementById('vf-true').onclick = ()=>{ document.getElementById('vf-out').textContent = '✅ Correcto. Diversos casos reportan 40–60% de ahorro.' };
 		document.getElementById('vf-false').onclick = ()=>{ document.getElementById('vf-out').textContent = '❌ Revisa la justificación: el rango típico es 40–60%.' };
