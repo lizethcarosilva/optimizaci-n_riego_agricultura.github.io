@@ -2,11 +2,13 @@
 const { title = 'Smart Irrigation Tolima' } = Astro.props;
 const site = new URL(Astro.site);
 const basePath = site.pathname.endsWith('/') ? site.pathname : site.pathname + '/';
+
 function withBase(path = '/') {
 	const normalized = path.startsWith('/') ? path.slice(1) : path;
 	return basePath + normalized;
 }
 const favicon = withBase('favicon.svg');
+const baseJson = JSON.stringify(basePath);
 ---
 <html lang="es">
 	<head>
@@ -60,7 +62,7 @@ const favicon = withBase('favicon.svg');
 		<script>
 			(function(){
 				try{
-					var base = {JSON.stringify(basePath)};
+					var base = ${baseJson};
 					var current = location.pathname;
 					var links = document.querySelectorAll('nav a');
 					links.forEach(function(a){
