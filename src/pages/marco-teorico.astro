@@ -1,0 +1,26 @@
+---
+import Page from "../layouts/Page.astro";
+const pageTitle = "Marco teórico";
+---
+<Page title={pageTitle}>
+	<h1 style="margin:0 0 1rem 0;">Marco teórico</h1>
+	<h3>Ecología y uso del agua</h3>
+	<p>La agricultura utiliza ~70% del agua dulce (FAO, 2022). El exceso de riego provoca salinización, compactación, pérdida de nutrientes por lixiviación y eutrofización de cuerpos de agua. La <em>evapotranspiración</em> y el balance hídrico del suelo son pilares para programar riego (CSU, 2023).</p>
+	<h3>Ingeniería de sistemas e IoT</h3>
+	<ul>
+		<li><strong>Sensores</strong>: humedad de suelo (capacitivos/resistivos), temperatura (TMP36/DHT), radiación (LDR), lluvia.</li>
+		<li><strong>Actuación</strong>: válvulas eléctricas y bombas controladas por relés o drivers.</li>
+		<li><strong>Comunicaciones</strong>: WiFi/LoRa; telemetría hacia plataformas en la nube.</li>
+	</ul>
+	<h3>Modelos predictivos</h3>
+	<p>Modelos de aprendizaje (LSTM) reducen el error de estimación respecto a métodos tradicionales (~31% según literatura reciente) al capturar patrones temporales de clima y demanda hídrica.</p>
+	<h3>Riego inteligente</h3>
+	<p>Integra medición, decisión y acción: 1) medir humedad y clima, 2) estimar déficit hídrico (ETc, predicción), 3) aplicar dosis óptima por zona, 4) verificar efecto. Mejora eficiencia 40–60% y productividad 15–25% en múltiples casos reportados.</p>
+	<h3>Referentes</h3>
+	<ul>
+		<li>FAO (2022); Martín Arroyo (2017) sobre eficiencia hídrica.</li>
+		<li>Bonilla & López (2015) sobre exceso en papa (Cundinamarca).</li>
+		<li>Li et al. (2022) LSTM en predicción hídrica.</li>
+		<li>Colorado State University (2023) programación de riegos.</li>
+	</ul>
+</Page>

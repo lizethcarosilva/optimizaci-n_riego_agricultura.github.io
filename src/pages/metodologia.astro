@@ -1,0 +1,24 @@
+---
+import Page from "../layouts/Page.astro";
+const pageTitle = "Metodología";
+---
+<Page title={pageTitle}>
+	<h1 style="margin:0 0 1rem 0;">Metodología</h1>
+	<h3>Enfoque</h3>
+	<p>Diseño e implementación iterativa de un sistema de riego inteligente con simulación previa, prototipado electrónico y análisis comparativo frente a riego tradicional.</p>
+	<h3>Etapas</h3>
+	<ol>
+		<li><strong>Diseño conceptual</strong>: arquitectura de sensores, control y actuadores (ESP32/Arduino, válvulas, red).</li>
+		<li><strong>Simulación</strong>: pruebas virtuales (Tinkercad/Proteus) de sensores, flujo de datos y lógica de control.</li>
+		<li><strong>Modelo predictivo</strong>: prototipo LSTM/heurística usando series climáticas e historial de riego.</li>
+		<li><strong>Prototipo piloto</strong>: montaje en parcela/huerta demostrativa; telemetría y control.</li>
+		<li><strong>Evaluación</strong>: métricas de consumo de agua, productividad, costo y huella ambiental.</li>
+	</ol>
+	<h3>Métodos y herramientas</h3>
+	<ul>
+		<li>Hardware: sensores de humedad, TMP36/DHT, LDR, relés/válvulas.</li>
+		<li>Software: microcontrolador (C/C++/Arduino), análisis Python, visualización web (Astro).</li>
+		<li>Datos: series climáticas (IDEAM/NOAA), registros de suelo y riego.</li>
+		<li>Análisis: comparación con línea base tradicional; pruebas A/B por sector.</li>
+	</ul>
+</Page>

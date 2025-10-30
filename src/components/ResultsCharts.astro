@@ -5,37 +5,24 @@
 		<canvas id="chartAgua" height="220" style="background:#fff;border:1px solid #e0e0e0;border-radius:12px;padding:0.5rem;"></canvas>
 		<canvas id="chartProd" height="220" style="background:#fff;border:1px solid #e0e0e0;border-radius:12px;padding:0.5rem;"></canvas>
 	</div>
+	<div id="chartsFallback" style="display:none;margin-top:0.5rem;color:#b71c1c;">No se pudieron cargar las gráficas. Intenta recargar la página.</div>
 </section>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" defer></script>
 <script>
-	(function(){
-		if(!window.Chart){ return; }
-		const aguaCtx = document.getElementById('chartAgua');
-		const prodCtx = document.getElementById('chartProd');
-		if(!aguaCtx || !prodCtx){ return; }
-		new Chart(aguaCtx, {
-			type: 'bar',
-			data: {
-				labels: ['Tradicional', 'Inteligente'],
-				datasets: [{
-					label: 'Consumo de agua (m³/ha)',
-					data: [100, 50],
-					backgroundColor: ['#90caf9','#66bb6a']
-				}]
-			},
-			options: { plugins: { legend: { display: false } }, scales: { y: { ticks: { color: '#111' } , grid: { color: '#eee' } }, x: { ticks: { color: '#111' } } } }
-		});
-		new Chart(prodCtx, {
-			type: 'bar',
-			data: {
-				labels: ['Antes', 'Después'],
-				datasets: [{
-					label: 'Productividad (%)',
-					data: [100, 120],
-					backgroundColor: ['#b0bec5','#a5d6a7']
-				}]
-			},
-			options: { plugins: { legend: { display: false } }, scales: { y: { ticks: { color: '#111' }, grid: { color: '#eee' } }, x: { ticks: { color: '#111' } } } }
-		});
-	})();
+	function initCharts(){
+		try{
+			if(!window.Chart){ throw new Error('ChartJS no disponible'); }
+			const aguaCtx = document.getElementById('chartAgua');
+			const prodCtx = document.getElementById('chartProd');
+			new Chart(aguaCtx, { type: 'bar', data: { labels: ['Tradicional', 'Inteligente'], datasets: [{ label: 'Consumo de agua (m³/ha)', data: [100, 50], backgroundColor: ['#90caf9','#66bb6a'] }] }, options: { plugins: { legend: { display: false } }, scales: { y: { ticks: { color: '#111' }, grid: { color: '#eee' } }, x: { ticks: { color: '#111' } } } } });
+			new Chart(prodCtx, { type: 'bar', data: { labels: ['Antes', 'Después'], datasets: [{ label: 'Productividad (%)', data: [100, 120], backgroundColor: ['#b0bec5','#a5d6a7'] }] }, options: { plugins: { legend: { display: false } }, scales: { y: { ticks: { color: '#111' }, grid: { color: '#eee' } }, x: { ticks: { color: '#111' } } } } });
+		} catch(e){
+			document.getElementById('chartsFallback').style.display = 'block';
+		}
+	}
+	if(document.readyState === 'complete' || document.readyState === 'interactive'){
+		window.setTimeout(initCharts, 0);
+	} else {
+		document.addEventListener('DOMContentLoaded', initCharts);
+	}
 </script>
