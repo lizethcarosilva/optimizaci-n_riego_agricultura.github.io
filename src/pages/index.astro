@@ -1,6 +1,11 @@
 ---
 import Page from "../layouts/Page.astro";
-const to = (p)=> new URL(p, Astro.site).pathname;
+const site = new URL(Astro.site);
+const basePath = site.pathname.endsWith('/') ? site.pathname : site.pathname + '/';
+const to = (path = '/') => {
+	const normalized = path.startsWith('/') ? path.slice(1) : path;
+	return basePath + normalized;
+};
 ---
 <Page title="Optimización de riego agrícola con IA e IoT">
 	<h1 style="margin:0 0 0.5rem 0;">OPTIMIZACIÓN DE RIEGO EN AGRICULTURA</h1>
@@ -20,7 +25,7 @@ const to = (p)=> new URL(p, Astro.site).pathname;
 		</div>
 	</div>
 	<div style="display:flex;flex-wrap:wrap;gap:0.5rem;">
-		<a href={to('/justificacion')} class="btn">Ir a Justificación</a>
-		<a href={to('/actividades')} class="btn btn--ghost">Ver Actividades</a>
+		<a href={to('justificacion')} class="btn">Ir a Justificación</a>
+		<a href={to('actividades')} class="btn btn--ghost">Ver Actividades</a>
 	</div>
 </Page>
