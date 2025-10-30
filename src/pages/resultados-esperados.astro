@@ -1,10 +1,10 @@
 ---
 import Page from "../layouts/Page.astro";
-import SensorSim from "../components/SensorSim.astro";
+import NNSimulator from "../components/NNSimulator.astro";
 const pageTitle = "Resultados esperados";
 ---
 <Page title={pageTitle}>
 	<h1 style="margin:0 0 1rem 0;">Resultados esperados</h1>
-	<p>Se espera reducir el consumo hídrico entre 40–60% respecto al riego tradicional y aumentar 15–25% la productividad a través de aplicación precisa y oportuna. Interactúa con el simulador de sensor para ver cuándo se enciende la bomba según la humedad.</p>
-	<SensorSim />
+	<p>Se espera reducir el consumo hídrico entre 40–60% respecto al riego tradicional y aumentar 15–25% la productividad. En este simulador, una pequeña red neuronal aprende una regla de riego a partir de datos sintéticos y predice si debe activarse el riego.</p>
+	<NNSimulator />
 </Page>

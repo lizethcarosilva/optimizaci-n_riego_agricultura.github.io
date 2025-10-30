@@ -1,0 +1,124 @@
+<section style="padding:2rem;max-width:1000px;margin:0 auto;">
+	<h2 style="margin:0 0 0.5rem 0;">Simulador de red neuronal (demo)</h2>
+	<p style="margin:0 0 1rem 0;">Este demo usa una red sencilla (1 capa oculta) para predecir si se debe regar a partir de humedad (%), temperatura (°C) y probabilidad de lluvia (%). Entrena con datos sintéticos y muestra la pérdida.</p>
+	<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;align-items:start;">
+		<div class="card" style="background:#fff;border:1px solid #e0e0e0;border-radius:12px;padding:1rem;">
+			<label>Humedad (%)
+				<input id="x_h" type="range" min="0" max="100" value="35" style="width:100%"/>
+			</label>
+			<div><small id="x_h_v">35%</small></div>
+			<label>Temperatura (°C)
+				<input id="x_t" type="range" min="0" max="45" value="28" style="width:100%"/>
+			</label>
+			<div><small id="x_t_v">28°C</small></div>
+			<label>Lluvia (%)
+				<input id="x_r" type="range" min="0" max="100" value="20" style="width:100%"/>
+			</label>
+			<div><small id="x_r_v">20%</small></div>
+		</div>
+		<div class="card" style="background:#fff;border:1px solid #e0e0e0;border-radius:12px;padding:1rem;">
+			<div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+				<button id="train" class="btn" style="padding:0.5rem 0.8rem;border-radius:10px;border:1px solid #2e7d32;background:#2e7d32;color:#fff;cursor:pointer;">Entrenar 200 épocas</button>
+				<button id="predict" class="btn btn--ghost" style="padding:0.5rem 0.8rem;border-radius:10px;border:1px solid #9e9e9e;background:#fff;cursor:pointer;">Predecir</button>
+			</div>
+			<div style="margin-top:0.75rem;">
+				<strong>Pérdida (MSE):</strong> <span id="loss">—</span>
+			</div>
+			<div style="margin-top:0.5rem;">
+				<strong>Salida NN:</strong> <span id="yhat">—</span>
+				<br/>
+				<strong>Decisión:</strong> <span id="decision">—</span>
+			</div>
+		</div>
+	</div>
+</section>
+<script>
+	// Pequeña NN: 3->6->1, activación ReLU en oculta, sigmoide en salida
+	function randn(){ return (Math.random()*2-1)*0.1; }
+	function relu(x){ return Math.max(0,x); }
+	function sigmoid(x){ return 1/(1+Math.exp(-x)); }
+	function dsigmoid(y){ return y*(1-y); }
+
+	let W1 = Array.from({length:6}, ()=> [randn(),randn(),randn()]); // 6x3
+	let b1 = Array.from({length:6}, ()=> randn());
+	let W2 = Array.from({length:6}, ()=> randn()); // 6
+	let b2 = randn();
+	const lr = 0.01;
+
+	function forward(x){
+		const z1 = W1.map((w,i)=> w[0]*x[0] + w[1]*x[1] + w[2]*x[2] + b1[i]);
+		const h = z1.map(relu);
+		const z2 = h.reduce((s,hi,i)=> s + hi*W2[i], b2);
+		const y = sigmoid(z2);
+		return {x,h,y};
+	}
+
+	function trainEpoch(data){
+		let mse = 0;
+		for(const {x,t} of data){
+			const {h,y} = forward(x);
+			const e = y - t; // error
+			mse += e*e;
+			// retroprop
+			const dz2 = e * dsigmoid(y);
+			for(let i=0;i<6;i++){
+				W2[i] -= lr * dz2 * h[i];
+			}
+			b2 -= lr * dz2;
+			for(let i=0;i<6;i++){
+				const dh = dz2 * W2[i];
+				const dz1 = h[i] > 0 ? dh : 0; // dReLU
+				W1[i][0] -= lr * dz1 * x[0];
+				W1[i][1] -= lr * dz1 * x[1];
+				W1[i][2] -= lr * dz1 * x[2];
+				b1[i]      -= lr * dz1;
+			}
+		}
+		return mse / data.length;
+	}
+
+	function makeDataset(n=200){
+		// Reglas sintéticas: regar si humedad baja y (alta temp o poca lluvia)
+		const data = [];
+		for(let i=0;i<n;i++){
+			const h = Math.random(); // 0..1
+			const t = Math.random(); // 0..1
+			const r = Math.random(); // 0..1
+			const should = (h < 0.45 && (t > 0.55 || r < 0.4)) || (h < 0.3);
+			const y = should ? 1 : 0;
+			data.push({ x: [h,t,r], t: y });
+		}
+		return data;
+	}
+
+	const hIn = document.getElementById('x_h');
+	const tIn = document.getElementById('x_t');
+	const rIn = document.getElementById('x_r');
+	const hv = document.getElementById('x_h_v');
+	const tv = document.getElementById('x_t_v');
+	const rv = document.getElementById('x_r_v');
+	const lossEl = document.getElementById('loss');
+	const yhatEl = document.getElementById('yhat');
+	const decisionEl = document.getElementById('decision');
+
+	[hIn,tIn,rIn].forEach(el=> el.addEventListener('input', ()=>{
+		hv.textContent = hIn.value+'%';
+		tv.textContent = tIn.value+'°C';
+		rv.textContent = rIn.value+'%';
+	}));
+
+	document.getElementById('train').addEventListener('click', ()=>{
+		const data = makeDataset(400);
+		let last = 0;
+		for(let e=0;e<200;e++) last = trainEpoch(data);
+		lossEl.textContent = last.toFixed(4);
+	});
+
+	document.getElementById('predict').addEventListener('click', ()=>{
+		const x = [Number(hIn.value)/100, Number(tIn.value)/45, Number(rIn.value)/100];
+		const {y} = forward(x);
+		yhatEl.textContent = y.toFixed(3);
+		decisionEl.textContent = y > 0.5 ? 'Regar (Activado)' : 'No regar (Descanso)';
+		decisionEl.style.color = y > 0.5 ? '#2e7d32' : '#111';
+	});
+</script>
