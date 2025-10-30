@@ -1,0 +1,31 @@
+<section id="quiz" style="padding:2rem;max-width:900px;margin:0 auto;">
+	<h2 style="margin:0 0 0.5rem 0;">Juego: ¿Cuánta agua usarías hoy?</h2>
+	<p style="margin:0 0 1rem 0;">Elige una opción y compara con la predicción inteligente.</p>
+	<div style="display:flex;gap:0.75rem;flex-wrap:wrap;">
+		<button class="opt" data-v="0" style="padding:0.6rem 0.9rem;border-radius:10px;border:1px solid #ccc;background:#fff;cursor:pointer;">0 L/m²</button>
+		<button class="opt" data-v="3" style="padding:0.6rem 0.9rem;border-radius:10px;border:1px solid #ccc;background:#fff;cursor:pointer;">3 L/m²</button>
+		<button class="opt" data-v="6" style="padding:0.6rem 0.9rem;border-radius:10px;border:1px solid #ccc;background:#fff;cursor:pointer;">6 L/m²</button>
+		<button class="opt" data-v="10" style="padding:0.6rem 0.9rem;border-radius:10px;border:1px solid #ccc;background:#fff;cursor:pointer;">10 L/m²</button>
+	</div>
+	<div id="quizResult" style="margin-top:0.75rem;border:1px solid #e0e0e0;border-radius:12px;padding:1rem;background:#fafafa;">
+		<em>Selecciona una opción.</em>
+	</div>
+</section>
+<script>
+	const opts = Array.from(document.querySelectorAll('.opt'));
+	const result = document.getElementById('quizResult');
+	function predict(){
+		// Predicción simple: día templado, humedad media, sin lluvia -> 4 L/m²
+		return 4 + Math.round((Math.random()-0.5)*2);
+	}
+	opts.forEach(btn => {
+		btn.addEventListener('click', ()=>{
+			const user = Number(btn.dataset.v);
+			const ai = predict();
+			const diff = Math.abs(user - ai);
+			const good = diff <= 1;
+			result.innerHTML = `Predicción del sistema: <strong>${ai} L/m²</strong><br/>`+
+				(good ? '✅ ¡Excelente! Estás muy cerca del valor óptimo.' : 'ℹ️ Tu elección se aleja del óptimo. Intenta de nuevo.');
+		});
+	});
+</script>

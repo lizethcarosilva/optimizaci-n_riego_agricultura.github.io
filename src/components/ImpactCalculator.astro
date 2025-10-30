@@ -1,0 +1,36 @@
+<section id="calculadora" style="padding:2rem;max-width:900px;margin:0 auto;">
+	<h2 style="margin:0 0 0.5rem 0;">Calcula tu ahorro</h2>
+	<p style="margin:0 0 1rem 0;">Ingresa tu área y consumo actual para estimar ahorro con riego inteligente.</p>
+	<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:0.75rem;">
+		<label>Área (hectáreas)
+			<input id="area" type="number" min="0" step="0.1" value="1" style="width:100%;padding:0.5rem;border:1px solid #ccc;border-radius:8px;" />
+		</label>
+		<label>Consumo actual (m³/ha/mes)
+			<input id="consumo" type="number" min="0" step="10" value="300" style="width:100%;padding:0.5rem;border:1px solid #ccc;border-radius:8px;" />
+		</label>
+		<label>Costo agua (COP/m³)
+			<input id="costo" type="number" min="0" step="50" value="1500" style="width:100%;padding:0.5rem;border:1px solid #ccc;border-radius:8px;" />
+		</label>
+	</div>
+	<button id="calcBtn" style="margin-top:0.75rem;padding:0.6rem 1rem;border-radius:10px;border:1px solid #2e7d32;background:#2e7d32;color:#fff;cursor:pointer;">Calcular</button>
+	<div id="calcOut" style="margin-top:0.75rem;border:1px solid #e0e0e0;border-radius:12px;padding:1rem;background:#fff;">
+		<em>Resultados aparecerán aquí.</em>
+	</div>
+</section>
+<script>
+	const area = document.getElementById('area');
+	const consumo = document.getElementById('consumo');
+	const costo = document.getElementById('costo');
+	const out = document.getElementById('calcOut');
+	document.getElementById('calcBtn').addEventListener('click', ()=>{
+		const a = Number(area.value);
+		const c = Number(consumo.value);
+		const k = Number(costo.value);
+		if(a<=0 || c<=0 || k<0){ out.innerHTML = 'Verifica los datos.'; return; }
+		const ahorroPct = 0.5; // 50% (rango 40–60%)
+		const ahorroM3 = a * c * ahorroPct;
+		const ahorroCOP = Math.round(ahorroM3 * k);
+		out.innerHTML = `Ahorro estimado de agua: <strong>${ahorroM3.toLocaleString()} m³/mes</strong><br/>`+
+			`Ahorro económico: <strong>$${ahorroCOP.toLocaleString('es-CO')}</strong>`;
+	});
+</script>

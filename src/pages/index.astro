@@ -1,16 +1,58 @@
 ---
-
+import Hero from "../components/Hero.astro";
+import ProblemWater from "../components/ProblemWater.astro";
+import SystemSimulator from "../components/SystemSimulator.astro";
+import AIQuiz from "../components/AIQuiz.astro";
+import ResultsCharts from "../components/ResultsCharts.astro";
+import ImpactCalculator from "../components/ImpactCalculator.astro";
+import Team from "../components/Team.astro";
 ---
 
-<html lang="en">
+<html lang="es">
 	<head>
 		<meta charset="utf-8" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="viewport" content="width=device-width" />
 		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
+		<title>Smart Irrigation Tolima</title>
+		<style>
+			:root{color-scheme:light dark}
+			body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,sans-serif;background:#fafafa;color:#1b1b1b}
+			header,footer{padding:0.75rem 1rem}
+			nav a{color:inherit;text-decoration:none;margin-right:1rem}
+			.container{max-width:1100px;margin:0 auto}
+		</style>
 	</head>
 	<body>
-		<h1>Astro</h1>
+		<header>
+			<div class="container" style="display:flex;align-items:center;justify-content:space-between;">
+				<strong>OPTIMIZACIÓN DE RIEGO</strong>
+				<nav>
+					<a href="#problema">Problema</a>
+					<a href="#simulador">Simulador</a>
+					<a href="#quiz">Juego</a>
+					<a href="#resultados">Resultados</a>
+					<a href="#calculadora">Calculadora</a>
+					<a href="#equipo">Equipo</a>
+				</nav>
+			</div>
+		</header>
+
+		<main>
+			<Hero />
+			<ProblemWater />
+			<SystemSimulator />
+			<AIQuiz />
+			<ResultsCharts />
+			<ImpactCalculator />
+			<Team />
+		</main>
+
+		<footer>
+			<div class="container" style="display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;">
+				<span>© 2025 Universidad del Tolima · Proyecto estudiantil</span>
+				<a href="https://github.com/lizethcarosilva/optimizaci-n_riego_agricultura.github.io" target="_blank" rel="noopener">Código en GitHub</a>
+			</div>
+		</footer>
 	</body>
 </html>

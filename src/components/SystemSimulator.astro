@@ -1,0 +1,58 @@
+<section id="simulador" style="padding:2rem;max-width:1000px;margin:0 auto;">
+	<h2 style="margin:0 0 0.5rem 0;">Simulador de riego inteligente</h2>
+	<p style="margin:0 0 1rem 0;">Ajusta variables y observa la decisión del sistema.</p>
+	<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;align-items:start;">
+		<div style="border:1px solid #e0e0e0;border-radius:12px;padding:1rem;background:#fff;">
+			<label for="hum">Humedad del suelo (%)</label>
+			<input id="hum" type="range" min="0" max="100" value="45" style="width:100%" />
+			<div><small id="humVal">45%</small></div>
+		</div>
+		<div style="border:1px solid #e0e0e0;border-radius:12px;padding:1rem;background:#fff;">
+			<label for="temp">Temperatura (°C)</label>
+			<input id="temp" type="range" min="0" max="45" value="28" style="width:100%" />
+			<div><small id="tempVal">28°C</small></div>
+		</div>
+		<div style="border:1px solid #e0e0e0;border-radius:12px;padding:1rem;background:#fff;">
+			<label for="rain">Probabilidad de lluvia (%)</label>
+			<input id="rain" type="range" min="0" max="100" value="30" style="width:100%" />
+			<div><small id="rainVal">30%</small></div>
+		</div>
+	</div>
+	<div id="decision" style="margin-top:1rem;border:2px dashed #81c784;border-radius:12px;padding:1rem;background:#f1f8e9;display:flex;justify-content:space-between;gap:1rem;align-items:center;">
+		<div>
+			<div style="font-weight:700;">Riego:</div>
+			<div id="status">Calculando...</div>
+		</div>
+		<div>
+			<div style="font-weight:700;">Caudal recomendado:</div>
+			<div id="flow">—</div>
+		</div>
+	</div>
+</section>
+
+<script>
+	const hum = document.getElementById('hum');
+	const temp = document.getElementById('temp');
+	const rain = document.getElementById('rain');
+	const humVal = document.getElementById('humVal');
+	const tempVal = document.getElementById('tempVal');
+	const rainVal = document.getElementById('rainVal');
+	const status = document.getElementById('status');
+	const flow = document.getElementById('flow');
+
+	function decide(){
+		const h = Number(hum.value);
+		const t = Number(temp.value);
+		const r = Number(rain.value);
+		humVal.textContent = `${h}%`;
+		tempVal.textContent = `${t}°C`;
+		rainVal.textContent = `${r}%`;
+		// Heurística simple: menos de 40% humedad y temperatura>24 y lluvia<50 -> regar
+		const shouldIrrigate = (h < 40 && t > 24 && r < 50) || (h < 30);
+		status.textContent = shouldIrrigate ? 'Activado' : 'No necesario hoy';
+		const flowLitersHour = shouldIrrigate ? Math.round((40 - h + (t-20)*0.6) * (1 - r/150) + 5) : 0;
+		flow.textContent = shouldIrrigate ? `${Math.max(flowLitersHour, 3)} L/h` : '0 L/h';
+	}
+	[hum,temp,rain].forEach(el=> el.addEventListener('input', decide));
+	decide();
+</script>

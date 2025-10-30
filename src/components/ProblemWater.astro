@@ -1,0 +1,46 @@
+---
+const labels = {
+	low: "Déficit de riego: estrés hídrico",
+	ok: "Riego óptimo: cultivo saludable",
+	high: "Exceso de riego: riesgo de contaminación"
+};
+---
+
+<section id="problema" style="padding:2rem;max-width:1000px;margin:0 auto;">
+	<h2 style="margin:0 0 0.5rem 0;">El problema del agua en agricultura</h2>
+	<p style="margin:0 0 1rem 0;">Ajusta la cantidad de agua aplicada y observa el impacto.</p>
+	<div style="display:grid;grid-template-columns:1fr;gap:1rem;align-items:center;">
+		<input id="aguaRange" type="range" min="0" max="100" value="50" style="width:100%" />
+		<div id="feedback" style="border:1px solid #e0e0e0;border-radius:12px;padding:1rem;background:#fff;display:flex;gap:1rem;align-items:center;">
+			<div id="emoji" style="font-size:2rem;">🌱</div>
+			<div>
+				<div style="font-weight:600;" id="estado">{labels.ok}</div>
+				<small id="detalle">Uso de agua aproximado: 50%</small>
+			</div>
+		</div>
+	</div>
+</section>
+
+<script>
+	const range = document.getElementById('aguaRange');
+	const estado = document.getElementById('estado');
+	const detalle = document.getElementById('detalle');
+	const emoji = document.getElementById('emoji');
+	function update(val){
+		const v = Number(val);
+		detalle.textContent = `Uso de agua aproximado: ${v}%`;
+		if(v < 35){
+			estado.textContent = `${labels.low}`;
+			emoji.textContent = '🥵';
+			emoji.style.filter = 'grayscale(0)';
+		} else if(v > 65){
+			estado.textContent = `${labels.high}`;
+			emoji.textContent = '🌊';
+		} else {
+			estado.textContent = `${labels.ok}`;
+			emoji.textContent = '🌱';
+		}
+	}
+	range.addEventListener('input', (e)=> update(e.target.value));
+	update(range.value);
+</script>
