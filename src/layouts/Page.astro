@@ -1,7 +1,7 @@
 ---
 const { title = 'Smart Irrigation Tolima' } = Astro.props;
-const base = new URL('/', Astro.site).pathname;
-function href(path){ return new URL(path, Astro.site).pathname; }
+const base = new URL('/', Astro.site).pathname; // e.g., /optimizaci-n_riego_agricultura.github.io/
+function link(path){ return base + path.replace(/^\//,''); }
 const favicon = new URL('/favicon.svg', Astro.site).pathname;
 ---
 <html lang="es">
@@ -29,15 +29,15 @@ const favicon = new URL('/favicon.svg', Astro.site).pathname;
 			<div class="container" style="display:flex;align-items:center;justify-content:space-between;gap:0.5rem;flex-wrap:wrap;">
 				<strong>OPTIMIZACIÓN DE RIEGO</strong>
 				<nav>
-					<a href={href('/')}>Inicio</a>
-					<a href={href('/justificacion')}>Justificación</a>
-					<a href={href('/problema')}>Problema</a>
-					<a href={href('/objetivos')}>Objetivos</a>
-					<a href={href('/marco-teorico')}>Marco teórico</a>
-					<a href={href('/metodologia')}>Metodología</a>
-					<a href={href('/resultados-esperados')}>Resultados</a>
-					<a href={href('/referencias')}>Referencias</a>
-					<a href={href('/actividades')}>Actividades</a>
+					<a href={link('/')}>Inicio</a>
+					<a href={link('/justificacion')}>Justificación</a>
+					<a href={link('/problema')}>Problema</a>
+					<a href={link('/objetivos')}>Objetivos</a>
+					<a href={link('/marco-teorico')}>Marco teórico</a>
+					<a href={link('/metodologia')}>Metodología</a>
+					<a href={link('/resultados-esperados')}>Resultados</a>
+					<a href={link('/referencias')}>Referencias</a>
+					<a href={link('/actividades')}>Actividades</a>
 				</nav>
 			</div>
 		</header>
