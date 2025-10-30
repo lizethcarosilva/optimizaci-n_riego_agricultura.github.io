@@ -4,7 +4,14 @@ import NNSimulator from "../components/NNSimulator.astro";
 const pageTitle = "Resultados esperados";
 ---
 <Page title={pageTitle}>
-	<h1 style="margin:0 0 1rem 0;">Resultados esperados</h1>
-	<p>Se espera reducir el consumo hídrico entre 40–60% respecto al riego tradicional y aumentar 15–25% la productividad. En este simulador, una pequeña red neuronal aprende una regla de riego a partir de datos sintéticos y predice si debe activarse el riego.</p>
+	<h1 class="text-3xl font-semibold text-emerald-900 mb-3">Resultados esperados</h1>
+	<div class="rounded-2xl border border-emerald-100 bg-emerald-50/70 p-4 mb-4">
+		<p class="text-neutral-800">Con decisión basada en datos se espera <strong>reducir 40–60% el consumo</strong> frente al riego tradicional y <strong>mantener/mejorar 15–25% la productividad</strong>. Este demo muestra cómo una NN traduce tres <em>indicadores</em> (humedad, temperatura, lluvia) en una decisión diaria de riego.</p>
+		<ul class="list-disc ml-6 mt-2 text-neutral-800">
+			<li><strong>Importancias</strong>: ajusta cuánto pesa cada indicador al entrenar (simula cultivo/suelo/zona).</li>
+			<li><strong>Entrenar</strong>: la NN aprende un patrón con tus importancias (observa la pérdida MSE).</li>
+			<li><strong>Predecir</strong>: con indicadores actuales, la salida 0..1 define <em>Regar / No regar</em>.</li>
+		</ul>
+	</div>
 	<NNSimulator />
 </Page>
