@@ -74,7 +74,9 @@
 			<div class="result">
 				<strong>📊 Épocas entrenadas:</strong> <span id="epochs">0</span><br/>
 				<strong>📉 Error (pérdida):</strong> <span id="loss">—</span><br/>
-				<strong>🧮 Salida de la red:</strong> <span id="yhat">—</span><br/>
+			<strong>🧮 Salida de la red:</strong> <span id="nnOutput">—</span><br/>
+			<strong>⚖️ Puntaje ponderado:</strong> <span id="score">—</span><br/>
+			<strong>🔁 Probabilidad combinada:</strong> <span id="combined">—</span><br/>
 			</div>
 
 			<div id="decisionBox" class="decision-box" style="display: none;">
@@ -100,11 +102,12 @@
 					<th>Temp. (°C)</th>
 					<th>Lluvia (%)</th>
 					<th>Salida NN</th>
+					<th>Puntaje</th>
 					<th>Decisión</th>
 				</tr>
 			</thead>
 			<tbody id="historyBody">
-				<tr><td colspan="6" style="text-align: center; color: #999;">No hay datos aún. Presiona "Predecir" o activa simulación.</td></tr>
+				<tr><td colspan="7" style="text-align: center; color: #999;">No hay datos aún. Presiona "Predecir" o activa simulación.</td></tr>
 			</tbody>
 		</table>
 	</div>
@@ -184,7 +187,7 @@
 	// ============================================================================
 	// HISTÓRICO
 	// ============================================================================
-	/** @type {{h:number;t:number;r:number;yhat:number;decision:number}[]} */
+	/** @type {{h:number;t:number;r:number;nn:number;score:number;combined:number;decision:number}[]} */
 	let history = [];
 	const MAX_HISTORY = 10;
 
@@ -206,7 +209,9 @@
 	const wrv = document.getElementById("w_r_v");
 
 	const lossEl = document.getElementById("loss");
-	const yhatEl = document.getElementById("yhat");
+	const nnOutputEl = document.getElementById("nnOutput");
+	const scoreEl = document.getElementById("score");
+	const combinedEl = document.getElementById("combined");
 	const decisionEl = document.getElementById("decision");
 	const decisionBox = document.getElementById("decisionBox");
 	const epochsEl = document.getElementById("epochs");
@@ -239,7 +244,14 @@
 					tension: 0.4
 				},
 				{
-					label: 'Decisión (0=No, 1=Sí)',
+					label: 'Lluvia (%)',
+					data: [],
+					borderColor: '#00796b',
+					backgroundColor: 'rgba(0, 121, 107, 0.1)',
+					tension: 0.4
+				},
+				{
+					label: 'Probabilidad combinada (%)',
 					data: [],
 					borderColor: '#1976d2',
 					backgroundColor: 'rgba(25, 118, 210, 0.1)',
@@ -277,6 +289,7 @@
 	});
 
 	updateDisplays();
+	predict();
 
 	// ============================================================================
 	// RED HACIA ADELANTE
@@ -341,14 +354,15 @@
 	// ============================================================================
 	// AGREGAR AL HISTÓRICO
 	// ============================================================================
-	/** @param {number} h @param {number} t @param {number} r @param {number} yhat @param {number} decision */
-	function addToHistory(h, t, r, yhat, decision) {
-		history.push({ h, t, r, yhat, decision });
+	/** @param {number} h @param {number} t @param {number} r @param {number} nn @param {number} score @param {number} combined @param {number} decision */
+	function addToHistory(h, t, r, nn, score, combined, decision) {
+		history.push({ h, t, r, nn, score, combined, decision });
 		if (history.length > MAX_HISTORY) history.shift();
 		chart.data.labels = history.map((_, i) => `#${i + 1}`);
 		chart.data.datasets[0].data = history.map(d => d.h);
 		chart.data.datasets[1].data = history.map(d => d.t);
-		chart.data.datasets[2].data = history.map(d => d.decision * 100);
+		chart.data.datasets[2].data = history.map(d => d.r);
+		chart.data.datasets[3].data = history.map(d => d.combined * 100);
 		chart.update();
 		if (historyBody) {
 			historyBody.innerHTML = history.map((d, i) => `
@@ -357,7 +371,8 @@
 					<td>${d.h.toFixed(1)}%</td>
 					<td>${d.t.toFixed(1)}°C</td>
 					<td>${d.r.toFixed(1)}%</td>
-					<td>${d.yhat.toFixed(3)}</td>
+					<td>${d.nn.toFixed(3)}</td>
+					<td>${d.score.toFixed(3)}</td>
 					<td><span class="badge ${d.decision > 0.5 ? 'badge-regar' : 'badge-no-regar'}">${d.decision > 0.5 ? '💧 Regar' : '🌤️ No regar'}</span></td>
 				</tr>
 			`).reverse().join('');
@@ -371,16 +386,27 @@
 		const h = hIn ? Number(hIn.value) : 35;
 		const t = tIn ? Number(tIn.value) : 28;
 		const r = rIn ? Number(rIn.value) : 20;
-		const x = [h / 100, t / 45, r / 100];
+		const normalizedH = h / 100;
+		const normalizedT = t / 45;
+		const normalizedR = r / 100;
+		const x = [normalizedH, normalizedT, normalizedR];
 		const { y } = forward(x);
-		if (yhatEl) yhatEl.textContent = y.toFixed(3);
-		const shouldIrrigate = y > 0.5;
+		if (nnOutputEl) nnOutputEl.textContent = y.toFixed(3);
+		const whVal = whIn && whIn.value != null ? Number(whIn.value) / 100 : 0.6;
+		const wtVal = wtIn && wtIn.value != null ? Number(wtIn.value) / 100 : 0.5;
+		const wrVal = wrIn && wrIn.value != null ? Number(wrIn.value) / 100 : 0.4;
+		const totalWeights = whVal + wtVal + wrVal || 1;
+		const weightedScore = ((1 - normalizedH) * whVal + normalizedT * wtVal + (1 - normalizedR) * wrVal) / totalWeights;
+		if (scoreEl) scoreEl.textContent = weightedScore.toFixed(3);
+		const combinedProb = Math.min(1, Math.max(0, (y + weightedScore) / 2));
+		if (combinedEl) combinedEl.textContent = combinedProb.toFixed(3);
+		const shouldIrrigate = combinedProb > 0.5;
 		if (decisionEl && decisionBox) {
 			decisionEl.textContent = shouldIrrigate ? "💧 REGAR ACTIVADO" : "🌤️ NO REGAR (Descanso)";
 			decisionBox.className = shouldIrrigate ? "decision-box decision-regar" : "decision-box decision-no-regar";
 			decisionBox.style.display = "block";
 		}
-		addToHistory(h, t, r, y, shouldIrrigate ? 1 : 0);
+		addToHistory(h, t, r, y, weightedScore, combinedProb, shouldIrrigate ? 1 : 0);
 	}
 
 	// ============================================================================
@@ -405,6 +431,7 @@
 				`• Lluvia: ${wrIn ? (wrIn.value / 100).toFixed(2) : '0.40'}\n\n` +
 				`Épocas totales: ${totalEpochs}\n` +
 				`Error final: ${lastLoss.toFixed(4)}`);
+			predict();
 		});
 	}
 
@@ -472,16 +499,19 @@
 				totalEpochs = 0;
 				history = [];
 				if (lossEl) lossEl.textContent = "—";
-				if (yhatEl) yhatEl.textContent = "—";
+				if (nnOutputEl) nnOutputEl.textContent = "—";
+				if (scoreEl) scoreEl.textContent = "—";
+				if (combinedEl) combinedEl.textContent = "—";
 				if (epochsEl) epochsEl.textContent = "0";
 				if (decisionBox) decisionBox.style.display = "none";
 				chart.data.labels = [];
 				chart.data.datasets[0].data = [];
 				chart.data.datasets[1].data = [];
 				chart.data.datasets[2].data = [];
+				chart.data.datasets[3].data = [];
 				chart.update();
 				if (historyBody) {
-					historyBody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: #999;">Sistema reiniciado. Presiona "Entrenar" para comenzar.</td></tr>';
+					historyBody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: #999;">Sistema reiniciado. Presiona "Entrenar" para comenzar.</td></tr>';
 				}
 				if (rtTimer) {
 					clearInterval(rtTimer);

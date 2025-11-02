@@ -1,0 +1,378 @@
+RED NEURONAL PARA RIEGO INTELIGENTE – EXPLICACIÓN PASO A PASO
+===============================================================
+
+INTRODUCCIÓN: ¿Qué es una red neuronal?
+----------------------------------------
+Imagina que tienes un amigo muy inteligente que sabe cuándo regar las plantas de un jardín. 
+Cada día, tu amigo mira tres cosas:
+
+1. ¿Qué tan seca está la tierra? (Humedad del suelo)
+2. ¿Qué tan caliente está el día? (Temperatura)
+3. ¿Va a llover pronto? (Probabilidad de lluvia)
+
+Después de mirar estas tres cosas, tu amigo decide: "Sí, hay que regar" o "No, todavía no hace falta".
+
+Una RED NEURONAL es como entrenar a un robot para que piense como tu amigo. Al principio el robot no sabe nada, pero después de ver muchos ejemplos aprende a tomar buenas decisiones.
+
+
+PARTE 1: LAS NEURONAS (Las pequeñas "calculadoras" del robot)
+-------------------------------------------------------------
+
+Una neurona es como una mini-calculadora que:
+1. Recibe números
+2. Los multiplica y suma
+3. Decide si el resultado es importante o no
+4. Manda el resultado a otras neuronas
+
+Ejemplo con una neurona sencilla:
+----------------------------------
+Imagina que la neurona recibe dos números:
+- Humedad del suelo = 30% (tierra seca)
+- Temperatura = 35°C (día muy caliente)
+
+La neurona tiene "pesos" (números que dicen qué tan importante es cada cosa):
+- Peso de humedad = 0.8 (muy importante)
+- Peso de temperatura = 0.5 (medianamente importante)
+
+La neurona hace este cálculo:
+  Resultado = (Humedad × Peso_humedad) + (Temperatura × Peso_temperatura)
+  Resultado = (30 × 0.8) + (35 × 0.5)
+  Resultado = 24 + 17.5
+  Resultado = 41.5
+
+Luego la neurona dice: "¿Este número es suficientemente grande para importar?"
+Si el resultado es mayor que un umbral (digamos 40), la neurona se "activa" y pasa el número adelante.
+En este caso: 41.5 > 40, entonces la neurona dice "¡SÍ! Esto es importante" y manda 41.5 a la siguiente neurona.
+
+
+PARTE 2: LA ESTRUCTURA DE NUESTRA RED (Como un equipo de calculadoras)
+----------------------------------------------------------------------
+
+Nuestra red neuronal tiene TRES CAPAS, como tres pisos de un edificio:
+
+CAPA 1: LA ENTRADA (Piso de abajo – donde entran los datos)
+------------------------------------------------------------
+Aquí viven 3 neuronas que reciben la información del jardín:
+
+  Neurona 1: Recibe la HUMEDAD (ejemplo: 35%)
+  Neurona 2: Recibe la TEMPERATURA (ejemplo: 28°C)
+  Neurona 3: Recibe la PROBABILIDAD DE LLUVIA (ejemplo: 20%)
+
+Estas neuronas no hacen cálculos, solo reciben y pasan los números.
+
+
+CAPA 2: LA CAPA OCULTA (Piso del medio – donde se piensa)
+----------------------------------------------------------
+Aquí viven 6 neuronas que son las "pensadoras". Cada una de estas 6 neuronas:
+- Recibe los 3 números de la capa de entrada
+- Tiene sus propios pesos (números) para multiplicar
+- Hace sus cálculos y decide si activarse o no
+
+Veamos un EJEMPLO con UNA de estas 6 neuronas (llamémosla "Neurona Oculta #1"):
+
+Datos que recibe:
+- Humedad normalizada = 0.35 (dividimos 35% entre 100)
+- Temperatura normalizada = 0.62 (dividimos 28°C entre 45)
+- Lluvia normalizada = 0.20 (dividimos 20% entre 100)
+
+Pesos que tiene (números aleatorios al inicio):
+- Peso para humedad = 0.5
+- Peso para temperatura = -0.3
+- Peso para lluvia = 0.8
+- Sesgo (un número extra) = 0.1
+
+La neurona hace este cálculo:
+  Suma = (Humedad × Peso_H) + (Temperatura × Peso_T) + (Lluvia × Peso_L) + Sesgo
+  Suma = (0.35 × 0.5) + (0.62 × -0.3) + (0.20 × 0.8) + 0.1
+  Suma = 0.175 + (-0.186) + 0.16 + 0.1
+  Suma = 0.249
+
+Ahora la neurona usa una función de activación llamada ReLU (Rectified Linear Unit):
+  Si Suma > 0: La neurona manda la Suma
+  Si Suma ≤ 0: La neurona manda 0
+
+En nuestro caso: 0.249 > 0, entonces la neurona manda 0.249 a la siguiente capa.
+
+Las otras 5 neuronas ocultas hacen lo mismo, cada una con sus propios pesos diferentes.
+Al final de esta capa tenemos 6 números (uno de cada neurona oculta).
+
+
+CAPA 3: LA SALIDA (Piso de arriba – donde se decide)
+-----------------------------------------------------
+Aquí vive 1 sola neurona que toma la decisión final. Recibe los 6 números de la capa oculta.
+
+Ejemplo:
+Los 6 números que recibe son: [0.249, 0.0, 0.521, 0.123, 0.0, 0.387]
+
+Esta neurona también tiene pesos (uno para cada número):
+- Peso #1 = 0.6
+- Peso #2 = 0.2
+- Peso #3 = -0.4
+- Peso #4 = 0.8
+- Peso #5 = 0.3
+- Peso #6 = 0.5
+- Sesgo = -0.2
+
+Hace el cálculo:
+  Suma = (0.249 × 0.6) + (0.0 × 0.2) + (0.521 × -0.4) + (0.123 × 0.8) + (0.0 × 0.3) + (0.387 × 0.5) + (-0.2)
+  Suma = 0.1494 + 0 + (-0.2084) + 0.0984 + 0 + 0.1935 + (-0.2)
+  Suma = 0.0329
+
+Ahora usa una función especial llamada SIGMOID que convierte cualquier número en un valor entre 0 y 1:
+  Sigmoid(0.0329) = 1 / (1 + e^(-0.0329))
+  Sigmoid(0.0329) ≈ 0.508
+
+Este número (0.508) es la PROBABILIDAD de que haya que regar.
+- Si es mayor que 0.5 → "SÍ, hay que regar"
+- Si es menor que 0.5 → "NO, todavía no hace falta"
+
+En nuestro caso: 0.508 > 0.5, entonces la decisión es: ¡REGAR!
+
+
+PARTE 3: ¿CÓMO APRENDE LA RED? (El entrenamiento)
+--------------------------------------------------
+
+Al principio, los pesos de todas las neuronas son números aleatorios, así que la red toma decisiones malas.
+Para que aprenda, le mostramos muchos EJEMPLOS con respuestas correctas.
+
+EJEMPLO DE ENTRENAMIENTO – PASO A PASO:
+---------------------------------------
+
+PASO 1: Mostramos un ejemplo
+-----------------------------
+Le damos a la red:
+- Humedad = 25% (muy seca)
+- Temperatura = 35°C (muy caliente)
+- Lluvia = 5% (casi no va a llover)
+
+La respuesta correcta es: SÍ HAY QUE REGAR (porque está seco, caliente y no lloverá)
+
+PASO 2: La red hace su predicción con los pesos actuales
+---------------------------------------------------------
+La red procesa los números por todas sus capas (como vimos antes) y dice:
+"Yo creo que la probabilidad de regar es 0.3"
+
+Pero 0.3 significa "NO regar" (porque es menor que 0.5).
+¡La red se equivocó! Debería haber dicho algo mayor que 0.5.
+
+PASO 3: Calculamos el error
+----------------------------
+Error = Respuesta correcta - Predicción de la red
+Error = 1 - 0.3
+Error = 0.7
+
+¡El error es grande! La red está muy equivocada.
+
+PASO 4: Ajustamos los pesos (Retropropagación)
+-----------------------------------------------
+Aquí es donde ocurre la "magia". La red ajusta sus pesos para reducir el error.
+
+Es como si la red dijera: 
+"Mmm, me equivoqué mucho. Voy a cambiar mis pesos un poquito para acercarme a la respuesta correcta."
+
+La red calcula cuánto debe cambiar cada peso usando una fórmula matemática (derivadas del error).
+Por ejemplo, si un peso era 0.5, ahora podría cambiar a 0.52 o 0.48.
+
+El cambio es pequeño y controlado por la "tasa de aprendizaje" (en nuestro caso 0.01).
+
+PASO 5: Repetimos con más ejemplos
+-----------------------------------
+Le mostramos otro ejemplo:
+- Humedad = 80% (tierra húmeda)
+- Temperatura = 15°C (día fresco)
+- Lluvia = 90% (va a llover mucho)
+
+Respuesta correcta: NO REGAR
+
+La red hace su predicción (digamos 0.6 = "Sí regar"), calculamos el error (0 - 0.6 = -0.6),
+y ajustamos los pesos otra vez.
+
+PASO 6: Entrenamos con MUCHOS ejemplos
+---------------------------------------
+En nuestro simulador generamos 400 ejemplos diferentes y repetimos el proceso 300 veces (épocas).
+Cada vez los pesos se ajustan un poquito más y la red se vuelve mejor en sus predicciones.
+
+Después de entrenar, la red aprende patrones como:
+- "Si humedad es baja Y temperatura es alta → Probablemente hay que regar"
+- "Si va a llover mucho → Probablemente NO hay que regar"
+- "Si temperatura es baja Y humedad es alta → Probablemente NO hay que regar"
+
+
+PARTE 4: EJEMPLO COMPLETO DE PRINCIPIO A FIN
+---------------------------------------------
+
+Situación inicial del jardín:
+-----------------------------
+- Humedad del suelo: 40%
+- Temperatura: 30°C
+- Probabilidad de lluvia: 15%
+
+PASO 1: Normalizamos los datos (convertimos a números entre 0 y 1)
+-------------------------------------------------------------------
+- Humedad normalizada = 40 / 100 = 0.40
+- Temperatura normalizada = 30 / 45 = 0.67
+- Lluvia normalizada = 15 / 100 = 0.15
+
+Nota especial: La humedad se invierte (1 - 0.40 = 0.60) porque humedad BAJA significa más necesidad de riego.
+
+Datos de entrada finales:
+- Input 1: 0.60 (humedad invertida)
+- Input 2: 0.67 (temperatura)
+- Input 3: 0.15 (lluvia)
+
+PASO 2: Pasamos por la capa oculta (6 neuronas)
+------------------------------------------------
+Supongamos que después de entrenar, cada neurona oculta tiene estos pesos:
+
+Neurona Oculta #1:
+  Suma = (0.60 × 0.45) + (0.67 × 0.32) + (0.15 × -0.28) + 0.05
+  Suma = 0.27 + 0.2144 + (-0.042) + 0.05 = 0.4924
+  ReLU(0.4924) = 0.4924 (pasa porque es positivo)
+
+Neurona Oculta #2:
+  Suma = (0.60 × -0.12) + (0.67 × 0.58) + (0.15 × 0.23) + (-0.1)
+  Suma = -0.072 + 0.3886 + 0.0345 + (-0.1) = 0.2511
+  ReLU(0.2511) = 0.2511
+
+Neurona Oculta #3:
+  Suma = (0.60 × 0.78) + (0.67 × -0.15) + (0.15 × 0.42) + 0.08
+  Suma = 0.468 + (-0.1005) + 0.063 + 0.08 = 0.5105
+  ReLU(0.5105) = 0.5105
+
+Neurona Oculta #4:
+  Suma = (0.60 × 0.25) + (0.67 × 0.48) + (0.15 × -0.56) + (-0.03)
+  Suma = 0.15 + 0.3216 + (-0.084) + (-0.03) = 0.3576
+  ReLU(0.3576) = 0.3576
+
+Neurona Oculta #5:
+  Suma = (0.60 × -0.35) + (0.67 × 0.12) + (0.15 × 0.67) + 0.12
+  Suma = -0.21 + 0.0804 + 0.1005 + 0.12 = 0.0909
+  ReLU(0.0909) = 0.0909
+
+Neurona Oculta #6:
+  Suma = (0.60 × 0.52) + (0.67 × 0.38) + (0.15 × -0.44) + 0.02
+  Suma = 0.312 + 0.2546 + (-0.066) + 0.02 = 0.5206
+  ReLU(0.5206) = 0.5206
+
+Salidas de la capa oculta: [0.4924, 0.2511, 0.5105, 0.3576, 0.0909, 0.5206]
+
+PASO 3: Pasamos por la neurona de salida
+-----------------------------------------
+Esta neurona tiene pesos entrenados:
+  Pesos = [0.62, 0.45, -0.38, 0.71, 0.28, 0.54]
+  Sesgo = -0.15
+
+Cálculo:
+  Suma = (0.4924 × 0.62) + (0.2511 × 0.45) + (0.5105 × -0.38) + (0.3576 × 0.71) + (0.0909 × 0.28) + (0.5206 × 0.54) + (-0.15)
+  Suma = 0.3053 + 0.1130 + (-0.1940) + 0.2539 + 0.0255 + 0.2811 + (-0.15)
+  Suma = 0.6348
+
+Aplicamos Sigmoid:
+  Sigmoid(0.6348) = 1 / (1 + e^(-0.6348))
+  Sigmoid(0.6348) = 1 / (1 + 0.5299)
+  Sigmoid(0.6348) = 1 / 1.5299
+  Sigmoid(0.6348) ≈ 0.654
+
+PASO 4: Interpretamos el resultado
+-----------------------------------
+La red neuronal dice: "La probabilidad de que haya que regar es 0.654"
+
+Como 0.654 > 0.5, la decisión final es: ¡SÍ, HAY QUE REGAR!
+
+PASO 5: Combinamos con el puntaje ponderado (en nuestro simulador)
+-------------------------------------------------------------------
+Para hacer la decisión más robusta, calculamos también un "puntaje manual" usando los pesos configurados por el usuario:
+
+Pesos del usuario:
+- Peso humedad = 0.60
+- Peso temperatura = 0.50
+- Peso lluvia = 0.40
+- Total pesos = 1.50
+
+Puntaje ponderado:
+  Puntaje = [(1 - 0.40) × 0.60 + 0.67 × 0.50 + (1 - 0.15) × 0.40] / 1.50
+  Puntaje = [0.60 × 0.60 + 0.67 × 0.50 + 0.85 × 0.40] / 1.50
+  Puntaje = [0.36 + 0.335 + 0.34] / 1.50
+  Puntaje = 1.035 / 1.50
+  Puntaje = 0.690
+
+Probabilidad combinada:
+  Combinada = (Salida_NN + Puntaje) / 2
+  Combinada = (0.654 + 0.690) / 2
+  Combinada = 0.672
+
+Como 0.672 > 0.5, la decisión final confirmada es: ✅ REGAR ACTIVADO
+
+
+PARTE 5: ¿POR QUÉ FUNCIONA ESTO?
+---------------------------------
+
+Ventajas de usar una red neuronal:
+-----------------------------------
+1. APRENDE PATRONES COMPLEJOS: Puede detectar relaciones que no son obvias. Por ejemplo, "si la humedad es media pero la temperatura es MUY alta y no lloverá, entonces sí regar", algo que una simple fórmula no captaría.
+
+2. SE ADAPTA: Si entrenamos la red con datos de diferentes cultivos o climas, aprende las reglas específicas de cada situación.
+
+3. MEJORA CON MÁS DATOS: Mientras más ejemplos le mostremos, mejor se vuelve.
+
+4. NO NECESITA PROGRAMACIÓN MANUAL: No tenemos que escribir reglas como "si humedad < 30% Y temperatura > 35°C entonces regar". La red descubre las reglas sola.
+
+Comparación con un sistema simple:
+-----------------------------------
+Sistema simple (sin red neuronal):
+  if (humedad < 30) {
+    regar = true;
+  } else {
+    regar = false;
+  }
+
+Este sistema solo mira la humedad e ignora temperatura y lluvia. Es muy básico.
+
+Red neuronal:
+  - Considera TODAS las variables al mismo tiempo
+  - Aprende la importancia relativa de cada una
+  - Se adapta a nuevas situaciones
+  - Puede detectar combinaciones específicas (ej: "humedad 50% + temperatura 40°C + lluvia 0%" = regar)
+
+
+PARTE 6: EN RESUMEN (Para recordar fácilmente)
+-----------------------------------------------
+
+¿Qué es una red neuronal?
+→ Un sistema que aprende a tomar decisiones viendo muchos ejemplos.
+
+¿Cómo funciona?
+→ Tiene capas de "neuronas" (mini-calculadoras) que procesan datos y pasan resultados a la siguiente capa.
+
+¿Cómo aprende?
+→ Le mostramos ejemplos con respuestas correctas, calcula su error y ajusta sus "pesos" (números internos) poco a poco.
+
+¿Para qué sirve en nuestro proyecto?
+→ Para decidir automáticamente cuándo regar las plantas, considerando humedad, temperatura y lluvia.
+
+¿Por qué es mejor que un sistema simple?
+→ Porque aprende patrones complejos, se adapta a diferentes situaciones y mejora con el tiempo.
+
+
+ANALOGÍA FINAL (Para visualizarlo mejor)
+-----------------------------------------
+Imagina que la red neuronal es como un estudiante aprendiendo a identificar frutas:
+
+Día 1: Le muestras una manzana roja y le dices "esto es una manzana".
+       El estudiante dibuja: "frutas rojas y redondas = manzanas"
+       
+Día 2: Le muestras una manzana verde. El estudiante se confunde porque no es roja.
+       Ajusta su dibujo: "frutas redondas (de cualquier color) = manzanas"
+       
+Día 3: Le muestras una sandía. El estudiante dice "¡manzana!" porque es redonda.
+       Le corriges. Ajusta: "frutas redondas PEQUEÑAS = manzanas"
+       
+Después de ver muchas frutas (manzanas, peras, naranjas, sandías), el estudiante aprende
+a reconocer cada una sin equivocarse.
+
+La red neuronal hace lo mismo, pero con datos de humedad, temperatura y lluvia,
+y aprende cuándo decir "regar" o "no regar".
+
+
+¡Eso es todo! Ahora entiendes cómo funciona la red neuronal de riego paso a paso. 🌱💧🤖
+

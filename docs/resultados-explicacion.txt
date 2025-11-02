@@ -1,0 +1,80 @@
+CAPÍTULO "RESULTADOS ESPERADOS" – EXPLICACIÓN DETALLADA
+=======================================================
+
+1. Propósito del capítulo
+-------------------------
+El capítulo de Resultados Esperados describe el impacto que se busca alcanzar con el anteproyecto de riego inteligente y cómo la simulación desarrollada (NNSimulator) sirve para comunicar de forma tangible el funcionamiento de la red neuronal propuesta. Su rol es mostrar que la intervención tecnológica generará beneficios medibles en ahorro de agua, eficiencia operativa y productividad agrícola.
+
+2. Resumen del simulador presentado
+-----------------------------------
+El simulador es una versión interactiva de la red neuronal pensada para el sistema final. Permite experimentar con tres variables climáticas críticas:
+
+  * Humedad del suelo (0 % – 100 %)
+  * Temperatura ambiente (0 °C – 45 °C)
+  * Probabilidad de lluvia (0 % – 100 %)
+
+Cada sensor tiene un peso asignado (0.00 – 1.00) que representa la importancia relativa dentro de la decisión. El usuario puede entrenar la red con la configuración actual de pesos, generar predicciones puntuales y activar una simulación en tiempo real que recorre lecturas de ejemplo. El simulador visualiza tres salidas clave: la probabilidad estimada por la red neuronal (`Salida NN`), el puntaje ponderado según los pesos (`Puntaje`) y la probabilidad combinada que define la decisión final (`Decisión`).
+
+3. Arquitectura de la red neuronal
+----------------------------------
+La red neuronal es un perceptrón multicapa (MLP) básico con las siguientes características:
+
+  * **Entradas:** 3 neuronas correspondientes a humedad (normalizada entre 0 y 1), temperatura (dividida entre 45 °C) y lluvia (normalizada). La humedad se invierte internamente (`1 - humedad`) para reflejar que humedad baja implica necesidad de riego.
+  * **Capa oculta:** 6 neuronas con función de activación ReLU (Rectified Linear Unit). Esta capa aprende combinaciones no lineales de los sensores.
+  * **Capa de salida:** 1 neurona con activación sigmoide, que regresa un valor continuo entre 0 y 1 interpretado como probabilidad de requerir riego.
+  * **Inicialización:** matrices de pesos (`W1`, `W2`) y sesgos (`b1`, `b2`) se inicializan con valores aleatorios de media cero y desviación pequeña (aprox. ±0.1) para favorecer la convergencia.
+  * **Aprendizaje:** usa descenso de gradiente estocástico con tasa de aprendizaje fija `lr = 0.01`. El error se calcula con la diferencia entre la salida real y la deseada (función MSE). Durante la retropropagación se ajustan pesos y sesgos tanto de la capa oculta como de la de salida.
+
+4. Generación del conjunto de entrenamiento
+-------------------------------------------
+Cuando se presiona "Entrenar Red" se crea un dataset sintético de 400 muestras. Cada muestra contiene valores aleatorios uniformes de humedad, temperatura y lluvia, junto con una etiqueta binaria (0 = no regar, 1 = regar) generada con una función heurística dependiente de los pesos elegidos:
+
+    score = (1 - humedad) * peso_humedad
+            + temperatura * peso_temperatura
+            + (1 - lluvia) * peso_lluvia
+
+Si `score` supera el umbral 0.6 la etiqueta esperada es 1, de lo contrario 0. Al entrenar 300 épocas, la red aprende a aproximar esa lógica bajo los pesos actuales. Se actualizan en pantalla las épocas acumuladas, la pérdida promedio final y se fuerza una nueva predicción con los parámetros entrenados.
+
+5. Metodología de predicción y decisión
+---------------------------------------
+En cada predicción se calculan tres indicadores para mejorar la interpretabilidad:
+
+  1. **Salida NN:** resultado directo de la red neuronal (probabilidad modelada).
+  2. **Puntaje ponderado:** combinación lineal normalizada de los sensores, usando los pesos seleccionados. Proporciona una referencia intuitiva de cómo la lógica tradicional ponderada influye en la decisión.
+  3. **Probabilidad combinada:** promedio controlado entre la `Salida NN` y el `Puntaje ponderado`. Este valor se usa como umbral para decidir regar (si > 0.5) o no regar. Es visible en el histórico y en la gráfica como una curva independiente.
+
+6. Visualizaciones y registro histórico
+---------------------------------------
+El simulador mantiene una tabla y un gráfico con las últimas 10 predicciones. Para cada lectura se guardan humedad, temperatura, lluvia, salida de la red, puntaje y decisión final. El gráfico de líneas muestra cuatro series: humedad, temperatura, lluvia y probabilidad combinada, lo que permite detectar tendencias y la contribución de la lluvia a las decisiones.
+
+7. Relación con los resultados esperados del proyecto
+-----------------------------------------------------
+El capítulo argumenta que la adopción de la red neuronal y del control inteligente permitirá:
+
+  * **Optimizar el uso del agua:** reducir entre 40 % y 60 % el consumo, al regar sólo cuando la probabilidad combinada lo exige.
+  * **Incrementar la productividad:** mejorar rendimientos entre 15 % y 25 % por mantener condiciones óptimas del cultivo.
+  * **Disminuir costos operativos:** ahorrar más del 40 % en agua y energía gracias a la automatización.
+  * **Desarrollar capacidades locales:** fortalecer habilidades en IoT, inteligencia artificial y automatización en la región.
+  * **Generar impacto ambiental positivo:** evitar lixiviación de fertilizantes y proteger acuíferos mediante riegos racionales.
+  * **Escalar a diferentes cultivos:** adaptar pesos y entrenamiento para otras condiciones agroclimáticas.
+
+Cada objetivo se vincula directamente con la capacidad del algoritmo de anticipar momentos óptimos de riego, lo cual es visualizable en el simulador.
+
+8. Objetivos del anteproyecto
+------------------------------
+**Objetivo general:**
+
+Diseñar y validar un sistema inteligente de riego, basado en sensores IoT y una red neuronal, capaz de tomar decisiones autónomas para optimizar el consumo de agua y aumentar la productividad agrícola.
+
+**Objetivos específicos:**
+
+  1. Construir un modelo teórico y simulado del sistema, incluyendo la red neuronal y la arquitectura hardware (ESP32, sensores, válvulas y comunicación inalámbrica).
+  2. Desarrollar un conjunto de datos sintéticos e históricos que permita entrenar y probar la red neuronal en distintas condiciones climáticas.
+  3. Implementar un simulador interactivo (NNSimulator) que muestre al usuario cómo la red aprende y decide a partir de los pesos de cada sensor.
+  4. Evaluar el potencial de ahorro de agua, reducción de costos y mejora de rendimiento mediante métricas comparativas entre riego manual y riego inteligente.
+  5. Proponer un plan de despliegue piloto y de escalabilidad para diferentes tipos de cultivos y escenarios climáticos.
+
+9. Conclusiones
+---------------
+El simulador integra los componentes principales del proyecto y demuestra que la red neuronal puede capturar relaciones complejas entre humedad, temperatura y lluvia. Al permitir que los usuarios ajusten pesos y observen resultados en tiempo real, se generan evidencias sobre la viabilidad de alcanzar los resultados esperados y se identifican las condiciones bajo las cuales el sistema decide regar o esperar. Esta experiencia valida los objetivos planteados y prepara el camino para el desarrollo físico del prototipo cuando el anteproyecto sea aprobado.
+

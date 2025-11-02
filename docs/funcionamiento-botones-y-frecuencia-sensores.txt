@@ -1,0 +1,571 @@
+FUNCIONAMIENTO DE LOS BOTONES Y FRECUENCIA DE SENSORES
+========================================================
+
+PARTE 1: ¿QUÉ PASA CUANDO PRESIONAS CADA BOTÓN?
+------------------------------------------------
+
+🔴 BOTÓN "ENTRENAR RED"
+-----------------------
+
+Cuando presionas este botón, ocurre lo siguiente paso a paso:
+
+PASO 1: Captura de pesos actuales
+----------------------------------
+El simulador lee los valores de los 3 sliders de pesos:
+  - Peso de Humedad (ejemplo: 0.60)
+  - Peso de Temperatura (ejemplo: 0.50)
+  - Peso de Lluvia (ejemplo: 0.40)
+
+PASO 2: Generación del dataset de entrenamiento
+-----------------------------------------------
+Se crean 400 ejemplos sintéticos de forma aleatoria:
+
+Para cada ejemplo:
+  1. Se genera una humedad aleatoria entre 0 y 1 (ej: 0.42)
+  2. Se genera una temperatura aleatoria entre 0 y 1 (ej: 0.67)
+  3. Se genera una probabilidad de lluvia aleatoria entre 0 y 1 (ej: 0.15)
+  
+  4. Se calcula un "puntaje ideal" usando los pesos configurados:
+     Puntaje = (1 - humedad) × peso_h + temperatura × peso_t + (1 - lluvia) × peso_r
+     Ejemplo: (1 - 0.42) × 0.60 + 0.67 × 0.50 + (1 - 0.15) × 0.40
+            = 0.58 × 0.60 + 0.67 × 0.50 + 0.85 × 0.40
+            = 0.348 + 0.335 + 0.34
+            = 1.023
+  
+  5. Si el puntaje > 0.6 → Etiqueta = 1 (SÍ regar)
+     Si el puntaje ≤ 0.6 → Etiqueta = 0 (NO regar)
+  
+  6. Se guarda el ejemplo: {entrada: [0.42, 0.67, 0.15], etiqueta: 1}
+
+Al final tenemos 400 ejemplos como este, cada uno con diferentes valores.
+
+PASO 3: Entrenamiento (300 épocas)
+-----------------------------------
+Se repite este proceso 300 veces:
+
+Para cada época (iteración completa sobre los 400 ejemplos):
+  
+  Para cada ejemplo del dataset:
+    
+    A) PROPAGACIÓN HACIA ADELANTE (Forward):
+       - La red toma las 3 entradas
+       - Las pasa por la capa oculta (6 neuronas con ReLU)
+       - Obtiene una predicción de salida (neurona con sigmoid)
+       - Ejemplo: predice 0.42 cuando la respuesta correcta es 1
+    
+    B) CÁLCULO DEL ERROR:
+       Error = Predicción - Etiqueta_correcta
+       Error = 0.42 - 1 = -0.58
+       Error_cuadrado = (-0.58)² = 0.3364
+    
+    C) RETROPROPAGACIÓN (Backward):
+       - Calcula cuánto contribuyó cada peso al error
+       - Ajusta los pesos de la capa de salida:
+         Peso_nuevo = Peso_viejo - (tasa_aprendizaje × gradiente)
+         Ejemplo: Peso_nuevo = 0.45 - (0.01 × 2.3) = 0.427
+       
+       - Propaga el error hacia atrás y ajusta pesos de la capa oculta:
+         Similar al anterior, cada uno de los 18 pesos (6 neuronas × 3 entradas)
+         se ajusta un poco
+    
+  Al terminar los 400 ejemplos, se calcula el error promedio (MSE) de esta época.
+
+Después de 300 épocas, los pesos se han ajustado 120,000 veces (300 × 400),
+y la red ahora puede predecir correctamente según los pesos configurados.
+
+PASO 4: Actualización de pantalla
+----------------------------------
+  - Épocas entrenadas: se suma 300 al contador (si ya había 300, ahora muestra 600)
+  - Error (pérdida): muestra el MSE final (ejemplo: 0.0234)
+  - Aparece un alert con el resumen del entrenamiento
+  - Se ejecuta automáticamente una predicción con los valores actuales de los sliders
+
+TIEMPO ESTIMADO: 1-2 segundos en un navegador moderno.
+
+
+🔵 BOTÓN "PREDECIR AHORA"
+-------------------------
+
+Cuando presionas este botón, ocurre lo siguiente:
+
+PASO 1: Captura de valores actuales de los sensores
+----------------------------------------------------
+Lee los valores de los 3 sliders de entrada:
+  - Humedad del suelo (ejemplo: 35%)
+  - Temperatura ambiente (ejemplo: 28°C)
+  - Probabilidad de lluvia (ejemplo: 20%)
+
+PASO 2: Normalización de datos
+-------------------------------
+Convierte los valores a escala 0-1:
+  - Humedad normalizada = 35 / 100 = 0.35
+  - Temperatura normalizada = 28 / 45 = 0.622
+  - Lluvia normalizada = 20 / 100 = 0.20
+
+Datos de entrada: [0.35, 0.622, 0.20]
+
+PASO 3: Predicción con la red neuronal
+---------------------------------------
+Pasa los datos por la red entrenada:
+
+  A) Capa oculta:
+     Calcula la salida de las 6 neuronas usando los pesos actuales
+     Resultado: [0.234, 0.0, 0.456, 0.178, 0.0, 0.389]
+  
+  B) Capa de salida:
+     Combina las 6 salidas con los pesos de salida
+     Aplica sigmoid para obtener probabilidad
+     Resultado: 0.623 (Salida NN)
+
+PASO 4: Cálculo del puntaje ponderado
+--------------------------------------
+Lee los pesos actuales de los sliders:
+  - Peso humedad = 0.60
+  - Peso temperatura = 0.50
+  - Peso lluvia = 0.40
+
+Calcula el puntaje manual:
+  Puntaje = [(1 - 0.35) × 0.60 + 0.622 × 0.50 + (1 - 0.20) × 0.40] / (0.60 + 0.50 + 0.40)
+  Puntaje = [0.65 × 0.60 + 0.622 × 0.50 + 0.80 × 0.40] / 1.50
+  Puntaje = [0.39 + 0.311 + 0.32] / 1.50
+  Puntaje = 1.021 / 1.50
+  Puntaje = 0.681
+
+PASO 5: Probabilidad combinada
+-------------------------------
+Promedia la salida de la red y el puntaje ponderado:
+  Combinada = (Salida_NN + Puntaje) / 2
+  Combinada = (0.623 + 0.681) / 2
+  Combinada = 0.652
+
+PASO 6: Decisión final
+-----------------------
+Si Combinada > 0.5 → Decisión: "💧 REGAR ACTIVADO"
+Si Combinada ≤ 0.5 → Decisión: "🌤️ NO REGAR (Descanso)"
+
+En este caso: 0.652 > 0.5, entonces muestra "💧 REGAR ACTIVADO"
+
+PASO 7: Actualización de pantalla
+----------------------------------
+  - Panel de resultados:
+    * Salida de la red: 0.623
+    * Puntaje ponderado: 0.681
+    * Probabilidad combinada: 0.652
+  
+  - Cuadro de decisión: Se muestra con fondo verde y el mensaje "💧 REGAR ACTIVADO"
+  
+  - Histórico:
+    * Se agrega una nueva fila a la tabla con todos los datos
+    * Si ya hay 10 entradas, se elimina la más antigua
+  
+  - Gráfica:
+    * Se añade un nuevo punto a cada línea (humedad, temperatura, lluvia, probabilidad combinada)
+    * Se redibuja el gráfico con los últimos 10 puntos
+
+TIEMPO ESTIMADO: Instantáneo (< 50 milisegundos).
+
+
+🟠 BOTÓN "SIMULACIÓN: OFF/ON"
+-----------------------------
+
+Este botón alterna entre modo manual y automático.
+
+CUANDO SE ACTIVA (OFF → ON):
+-----------------------------
+PASO 1: Cambia el texto del botón a "⏸️ Simulación: ON"
+PASO 2: Cambia el color del botón a verde (#4caf50)
+PASO 3: Selecciona un ejemplo de muestra del array predefinido:
+        Muestras disponibles:
+          { h: 42, t: 26, r: 10 }  // Humedad media, temp baja, poca lluvia
+          { h: 38, t: 30, r: 15 }  // Humedad baja, temp media, poca lluvia
+          { h: 55, t: 22, r: 80 }  // Humedad alta, temp baja, mucha lluvia
+          { h: 28, t: 33, r: 5 }   // Humedad muy baja, temp alta, casi sin lluvia
+          { h: 47, t: 27, r: 40 }  // Humedad media, temp media, lluvia media
+          { h: 35, t: 29, r: 20 }  // Humedad baja, temp media, poca lluvia
+          { h: 25, t: 35, r: 0 }   // Humedad muy baja, temp muy alta, sin lluvia
+          { h: 65, t: 18, r: 90 }  // Humedad alta, temp baja, mucha lluvia
+
+PASO 4: Aplica la primera muestra inmediatamente:
+        - Mueve los sliders a los valores de la muestra
+        - Actualiza los displays
+        - Ejecuta predicción automáticamente
+
+PASO 5: Inicia un temporizador que cada 3 segundos:
+        - Avanza al siguiente ejemplo del array (de forma circular)
+        - Mueve los sliders
+        - Actualiza displays
+        - Ejecuta predicción
+        - Actualiza gráfica e histórico
+
+El ciclo continúa indefinidamente hasta que se presiona de nuevo.
+
+CUANDO SE DESACTIVA (ON → OFF):
+--------------------------------
+PASO 1: Detiene el temporizador (clearInterval)
+PASO 2: Cambia el texto del botón a "⏯️ Simulación: OFF"
+PASO 3: Restaura el color original del botón (naranja)
+PASO 4: Los sliders quedan en el último valor de la simulación
+PASO 5: El usuario puede ajustar manualmente de nuevo
+
+
+🔴 BOTÓN "REINICIAR TODO"
+-------------------------
+
+Cuando presionas este botón (después de confirmar en el diálogo):
+
+PASO 1: Reinicializa la red neuronal
+-------------------------------------
+  - Genera nuevos pesos aleatorios para W1 (18 valores entre -0.1 y 0.1)
+  - Genera nuevos sesgos aleatorios para b1 (6 valores)
+  - Genera nuevos pesos aleatorios para W2 (6 valores)
+  - Genera nuevo sesgo aleatorio para b2 (1 valor)
+  - Resetea totalEpochs a 0
+
+PASO 2: Limpia el histórico
+----------------------------
+  - Vacía el array de histórico (history = [])
+  - Limpia la tabla HTML
+  - Limpia los 4 datasets de la gráfica
+  - Redibuja la gráfica vacía
+
+PASO 3: Resetea displays
+-------------------------
+  - Épocas entrenadas: 0
+  - Error (pérdida): —
+  - Salida de la red: —
+  - Puntaje ponderado: —
+  - Probabilidad combinada: —
+  - Oculta el cuadro de decisión
+
+PASO 4: Detiene simulación si está activa
+------------------------------------------
+  - Detiene el timer
+  - Restaura el botón de simulación a OFF
+
+PASO 5: Mantiene valores de sliders
+------------------------------------
+Los sliders de entrada (humedad, temperatura, lluvia) y de pesos NO se resetean,
+quedan en sus valores actuales para que el usuario pueda entrenar de nuevo.
+
+
+═══════════════════════════════════════════════════════════════════════════════
+
+
+PARTE 2: FRECUENCIA DE SENSORES EN SISTEMA REAL
+------------------------------------------------
+
+🌱 RECOMENDACIONES PARA EL SISTEMA FÍSICO DE RIEGO
+--------------------------------------------------
+
+En un sistema real con sensores físicos y microcontrolador ESP32, la frecuencia
+de muestreo y procesamiento debe balancear varios factores:
+
+
+📊 FRECUENCIA DE LECTURA DE SENSORES
+-------------------------------------
+
+SENSOR DE HUMEDAD DEL SUELO (Capacitivo o Resistivo):
+------------------------------------------------------
+  ✅ Frecuencia recomendada: Cada 5-10 minutos
+  
+  Razones:
+  - La humedad del suelo cambia LENTAMENTE (horas, no minutos)
+  - Lecturas muy frecuentes desgastan el sensor (corrosión electroquímica)
+  - Consumo innecesario de energía en sistemas con batería
+  - Genera ruido sin información útil
+  
+  Ejemplo:
+    Cada 10 minutos = 144 lecturas/día
+    Suficiente para detectar cambios graduales y eventos de riego
+
+
+SENSOR DE TEMPERATURA (DHT22, DS18B20, BME280):
+------------------------------------------------
+  ✅ Frecuencia recomendada: Cada 2-5 minutos
+  
+  Razones:
+  - La temperatura ambiente cambia más rápido que la humedad del suelo
+  - Importante para detectar picos de calor que aumentan evapotranspiración
+  - Los sensores digitales modernos son rápidos y precisos
+  
+  Ejemplo:
+    Cada 5 minutos = 288 lecturas/día
+    Captura ciclos diurnos (frío mañana, calor mediodía, fresco tarde/noche)
+
+
+SENSOR DE LLUVIA (Pluviómetro o Sensor Capacitivo):
+----------------------------------------------------
+  ✅ Frecuencia recomendada: Cada 1-2 minutos (o por EVENTO)
+  
+  Razones:
+  - La lluvia puede comenzar y terminar rápidamente
+  - Es crítico detectarla a tiempo para cancelar riego programado
+  - Algunos sensores funcionan por interrupción (detectan evento en tiempo real)
+  
+  Alternativa (si no hay sensor físico):
+    API de clima cada 30-60 minutos para pronóstico de lluvia
+    Ejemplo: OpenWeatherMap, WeatherAPI, AEMET
+
+
+DATOS CLIMÁTICOS EXTERNOS (APIs de Internet):
+----------------------------------------------
+  ✅ Frecuencia recomendada: Cada 30-60 minutos
+  
+  Razones:
+  - Los servicios de clima limitan peticiones (ej: 1000 llamadas/día gratis)
+  - Los pronósticos se actualizan cada hora generalmente
+  - Complementan sensores locales con datos regionales
+  
+  Ejemplo:
+    Cada 60 minutos = 24 llamadas/día
+    Obtiene: temperatura, humedad relativa, velocidad viento, lluvia próximas 24h
+
+
+🧠 FRECUENCIA DE PROCESAMIENTO CON RED NEURONAL
+------------------------------------------------
+
+ANÁLISIS Y DECISIÓN DE RIEGO:
+------------------------------
+  ✅ Frecuencia recomendada: Cada 10-15 minutos
+  
+  Proceso:
+  1. El ESP32 lee los sensores según su frecuencia individual
+  2. Cada 10-15 minutos, recolecta las últimas lecturas disponibles
+  3. Normaliza los datos (humedad/100, temp/45, lluvia/100)
+  4. Ejecuta la red neuronal (inferencia muy rápida: ~5-50 ms)
+  5. Calcula probabilidad combinada
+  6. Toma decisión: activar/desactivar válvula de riego
+  
+  Razones:
+  - Balance entre reactividad y estabilidad
+  - Evita cambios bruscos (on/off rápido que daña válvulas y bombas)
+  - Permite promediar lecturas ruidosas
+  - Suficiente para responder a cambios reales en el cultivo
+  
+  Ejemplo de rutina:
+    05:00 → Lee sensores → NN predice 0.45 → No regar
+    05:15 → Lee sensores → NN predice 0.48 → No regar
+    05:30 → Lee sensores → NN predice 0.52 → ¡Activar riego!
+    05:45 → Lee sensores → NN predice 0.68 → Mantener riego
+    06:00 → Lee sensores → NN predice 0.42 → Desactivar riego
+
+
+GUARDADO EN BASE DE DATOS:
+---------------------------
+  ✅ Frecuencia recomendada: Cada análisis (10-15 minutos)
+  
+  Datos a guardar:
+    - Timestamp
+    - Humedad del suelo (%)
+    - Temperatura (°C)
+    - Probabilidad de lluvia (%)
+    - Salida de la red neuronal
+    - Puntaje ponderado
+    - Probabilidad combinada
+    - Decisión tomada (0 = no regar, 1 = regar)
+    - Estado de válvula (abierta/cerrada)
+    - Volumen de agua usado (si hay caudalímetro)
+  
+  Razones:
+  - Genera histórico para análisis posterior
+  - Permite reentrenar la red con datos reales
+  - Auditoría del sistema (¿por qué regó o no regó?)
+  - Cálculo de ahorro de agua vs sistema manual
+  
+  Esquema de tabla SQL:
+    CREATE TABLE lecturas_riego (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      timestamp DATETIME NOT NULL,
+      humedad_suelo FLOAT,
+      temperatura FLOAT,
+      prob_lluvia FLOAT,
+      salida_nn FLOAT,
+      puntaje_ponderado FLOAT,
+      prob_combinada FLOAT,
+      decision BOOLEAN,
+      valvula_abierta BOOLEAN,
+      volumen_ml INT,
+      INDEX idx_timestamp (timestamp)
+    );
+
+
+🔄 REENTRENAMIENTO DE LA RED
+-----------------------------
+
+FRECUENCIA RECOMENDADA: Cada 7-30 días (semanal o mensual)
+-----------------------------------------------------------
+
+Proceso:
+  1. Recolecta datos históricos del último período (ej: último mes)
+  2. Filtra y limpia datos (elimina outliers, sensores desconectados, etc.)
+  3. Un servidor externo o la nube ejecuta el entrenamiento (no el ESP32)
+     - Ejemplo: Script en Python con TensorFlow/PyTorch
+     - Usa los datos reales para ajustar la red
+  4. Valida el nuevo modelo con datos de prueba
+  5. Si mejora el rendimiento, exporta pesos actualizados
+  6. Envía los nuevos pesos al ESP32 (archivo JSON o por MQTT)
+  7. El ESP32 actualiza sus pesos en memoria y sigue operando
+
+Razones:
+  - La red se adapta a las condiciones específicas del cultivo y clima local
+  - Aprende patrones estacionales (primavera vs verano vs otoño)
+  - Mejora la precisión con datos reales vs datos sintéticos iniciales
+  - El ESP32 no tiene capacidad para entrenar (solo para inferencia)
+
+
+📱 NOTIFICACIONES Y ALERTAS
+----------------------------
+
+CUANDO ENVIAR NOTIFICACIONES AL USUARIO:
+-----------------------------------------
+  ✅ Riego activado/desactivado: En tiempo real (push notification)
+  ✅ Humedad crítica (< 20%): Inmediato
+  ✅ Temperatura extrema (> 40°C): Inmediato
+  ✅ Sensor desconectado: Después de 3 lecturas fallidas
+  ✅ Resumen diario: Una vez al día (ejemplo: 20:00)
+       - Agua consumida hoy
+       - Número de riegos
+       - Condiciones promedio
+  ✅ Resumen semanal: Domingo en la noche
+       - Ahorro vs riego manual estimado
+       - Gráfica de humedad/temperatura de la semana
+
+
+⚡ OPTIMIZACIÓN DE ENERGÍA (Importante para sistemas con batería)
+-----------------------------------------------------------------
+
+Si el sistema funciona con panel solar + batería:
+
+MODO ACTIVO (06:00 - 22:00):
+  - Lectura de sensores cada 5-10 minutos
+  - Procesamiento NN cada 10-15 minutos
+  - WiFi conectado para envío de datos a BD
+
+MODO AHORRO (22:00 - 06:00):
+  - Lectura de sensores cada 30 minutos (el cultivo no cambia mucho de noche)
+  - Procesamiento NN cada 30 minutos
+  - WiFi en modo sleep (solo despierta para enviar datos críticos)
+  - Pantalla/LEDs apagados
+
+MODO ULTRA-AHORRO (Batería < 20%):
+  - Solo lectura de humedad cada 60 minutos
+  - WiFi apagado (guarda datos en memoria local)
+  - Riego solo si humedad < umbral crítico (20%)
+
+
+═══════════════════════════════════════════════════════════════════════════════
+
+
+PARTE 3: EJEMPLO DE CRONOGRAMA REAL (DÍA TÍPICO)
+-------------------------------------------------
+
+🕐 05:00 AM
+-----------
+Sensor humedad: 42%  |  Sensor temp: 18°C  |  API clima: 10% lluvia
+Red neuronal: 0.32 → NO REGAR (tierra húmeda de la noche, temperatura baja)
+Guarda en BD: [05:00, 42, 18, 10, 0.32, NO]
+
+🕑 06:00 AM
+-----------
+Sensor humedad: 41%  |  Sensor temp: 22°C  |  API clima: 5% lluvia
+Red neuronal: 0.38 → NO REGAR (amanecer, todavía fresco)
+Guarda en BD: [06:00, 41, 22, 5, 0.38, NO]
+
+🕐 07:00 AM
+-----------
+Sensor humedad: 39%  |  Sensor temp: 26°C  |  API clima: 5% lluvia
+Red neuronal: 0.45 → NO REGAR (cerca del umbral, pero aún aceptable)
+Guarda en BD: [07:00, 39, 26, 5, 0.45, NO]
+
+🕑 08:00 AM
+-----------
+Sensor humedad: 36%  |  Sensor temp: 30°C  |  API clima: 5% lluvia
+Red neuronal: 0.54 → ✅ ACTIVAR RIEGO (humedad bajando, temperatura subiendo)
+Guarda en BD: [08:00, 36, 30, 5, 0.54, SÍ]
+💧 Abre válvula de riego
+📱 Push notification: "Riego activado en Parcela Principal"
+
+🕐 08:30 AM
+-----------
+Sensor humedad: 48%  |  Sensor temp: 32°C  |  API clima: 5% lluvia
+Red neuronal: 0.42 → ❌ DESACTIVAR RIEGO (humedad recuperada después de 30min)
+Guarda en BD: [08:30, 48, 32, 5, 0.42, NO]
+💧 Cierra válvula de riego
+📱 Push notification: "Riego completado (30 minutos, ~50 litros)"
+
+🕑 12:00 PM
+-----------
+Sensor humedad: 44%  |  Sensor temp: 38°C  |  API clima: 10% lluvia
+Red neuronal: 0.48 → NO REGAR (temperatura alta pero humedad aún aceptable)
+Guarda en BD: [12:00, 44, 38, 10, 0.48, NO]
+
+🕑 03:00 PM
+-----------
+Sensor humedad: 40%  |  Sensor temp: 39°C  |  API clima: 60% lluvia
+Red neuronal: 0.35 → NO REGAR (aunque hace calor, va a llover pronto)
+Guarda en BD: [15:00, 40, 39, 60, 0.35, NO]
+💡 La red aprendió a NO regar si hay alta probabilidad de lluvia
+
+🕑 05:00 PM
+-----------
+Sensor lluvia: DETECTA LLUVIA (evento)
+Sistema: Cancela cualquier riego programado
+Sensor humedad: 62%  |  Sensor temp: 24°C  |  Lluvia: 100%
+Red neuronal: 0.12 → NO REGAR (tierra húmeda por lluvia)
+Guarda en BD: [17:00, 62, 24, 100, 0.12, NO]
+
+🕑 08:00 PM
+-----------
+Sensor humedad: 58%  |  Sensor temp: 19°C  |  API clima: 20% lluvia
+Red neuronal: 0.28 → NO REGAR (noche, tierra húmeda)
+Guarda en BD: [20:00, 58, 19, 20, 0.28, NO]
+📱 Notificación resumen diario:
+   "Hoy se regó 1 vez (30min)
+    Agua usada: ~50 litros
+    Ahorro estimado: 60% vs riego manual
+    Temperatura máxima: 39°C
+    Lluvia acumulada: 8mm"
+
+
+═══════════════════════════════════════════════════════════════════════════════
+
+
+RESUMEN DE FRECUENCIAS RECOMENDADAS
+====================================
+
+| Actividad                           | Frecuencia          | Razón principal                    |
+|-------------------------------------|---------------------|------------------------------------|
+| Lectura humedad suelo               | 5-10 minutos        | Cambio lento, protege sensor       |
+| Lectura temperatura                 | 2-5 minutos         | Cambio medio, detecta picos        |
+| Lectura lluvia                      | 1-2 min o por evento| Cambio rápido, crítico             |
+| API clima (pronóstico)              | 30-60 minutos       | Límite de llamadas, actualización  |
+| Análisis con red neuronal           | 10-15 minutos       | Balance reactividad/estabilidad    |
+| Guardado en base de datos           | 10-15 minutos       | Cada análisis para histórico       |
+| Reentrenamiento de la red           | 7-30 días           | Adaptación gradual a condiciones   |
+| Notificación cambio de riego        | Tiempo real         | Usuario debe saber inmediatamente  |
+| Resumen diario                      | 1 vez al día        | Informativo sin saturar            |
+
+
+¿Por qué estas frecuencias y no otras?
+---------------------------------------
+✅ MÁS FRECUENTE = Más datos, pero:
+   - Desgaste de sensores
+   - Mayor consumo energético
+   - Sobrecarga de base de datos
+   - Decisiones inestables (ruido)
+
+✅ MENOS FRECUENTE = Ahorro de recursos, pero:
+   - Puede perder eventos críticos
+   - Respuesta lenta a cambios
+   - Menor precisión en control
+
+Las frecuencias recomendadas están basadas en:
+  - Características físicas del suelo y clima
+  - Velocidad de respuesta de las plantas
+  - Capacidad técnica del ESP32
+  - Mejores prácticas en agricultura de precisión
+
+
+FIN DEL DOCUMENTO
+=================
+
